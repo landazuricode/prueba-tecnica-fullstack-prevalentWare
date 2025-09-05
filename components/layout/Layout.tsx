@@ -5,27 +5,23 @@ import Header from './Header';
 interface LayoutProps {
   children: React.ReactNode;
   title: string;
-  subtitle?: string;
 }
 
-const Layout = ({ children, title, subtitle }: LayoutProps) => {
+const Layout = ({ children, title }: LayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className='min-h-screen bg-gray-50'>
+    <div className='min-h-screen bg-gray-50 flex'>
       {/* Barra lateral */}
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-      {/*  Contenido principal */}
-      <div className='lg:pl-80'>
+      {/* Contenido principal */}
+      <div className='flex-1 flex flex-col lg:ml-80'>
         {/* Encabezado */}
-        <Header
-          title={title}
-          subtitle={subtitle}
-          onMenuClick={() => setSidebarOpen(true)}
-        />
+        <Header title={title} onMenuClick={() => setSidebarOpen(true)} />
 
-        <main className='bg-gray-50 min-h-screen'>{children}</main>
+        {/* Contenido */}
+        <main className='flex-1 bg-gray-50 p-6'>{children}</main>
       </div>
     </div>
   );

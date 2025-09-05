@@ -70,14 +70,14 @@ const Sidebar = ({ isOpen = true, onClose }: SidebarProps) => {
       {/* Sidebar */}
       <div
         className={`
-        fixed lg:static inset-y-0 left-0 z-50 w-80 transform transition-transform duration-300  h-screen ease-in-out
+        fixed lg:fixed inset-y-0 left-0 z-50 w-80 transform transition-transform duration-300 h-screen ease-in-out
         ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         bg-gray-900
         shadow-2xl
       `}
       >
         <div className='flex flex-col h-full'>
-          <div className='px-6 py-4 border-b border-gray-700'>
+          <div className='px-6 py-3 border-b border-gray-700'>
             <div
               onClick={() =>
                 window.open('https://www.prevalentware.com/es/', '_blank')
