@@ -1,9 +1,60 @@
-import { ChevronRight, Github } from 'lucide-react';
+'use client';
+
+import { ChevronRight, Github, Loader2 } from 'lucide-react';
+import { useAuth } from '@/lib/auth/provider';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 
 const LoginPage = () => {
-  const handleGitHubLogin = () => {
-    alert('Proximamente...');
+  const { signIn, session, loading: authLoading } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const router = useRouter();
+
+  // Redirigir si ya ha iniciado sesión
+  useEffect(() => {
+    if (session?.data && !authLoading) {
+      router.push('/');
+    }
+  }, [session, authLoading, router]);
+
+  const handleGitHubLogin = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      setSuccess(null);
+
+      // Comprueba si GitHub OAuth está configurado
+      if (!process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID) {
+        setError(
+          'GitHub OAuth no está configurado. Por favor, configura las variables de entorno.'
+        );
+        setIsLoading(false);
+        return;
+      }
+
+      // Esto redirigirá a GitHub OAuth
+      await signIn();
+    } catch (error) {
+      console.error('Login error:', error);
+      setError('Error al iniciar sesión. Por favor, inténtalo de nuevo.');
+      setIsLoading(false);
+    }
+    // Nota: No actualizo isLoading como falso aquí porque la página redireccionará
   };
+
+  // Mostrar carga si auth está todavía cargando
+  if (authLoading) {
+    return (
+      <div className='min-h-screen bg-gray-900 flex items-center justify-center'>
+        <div className='flex items-center space-x-3'>
+          <Loader2 className='w-6 h-6 animate-spin text-white' />
+          <span className='text-white text-lg'>Cargando...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className='min-h-screen bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8'>
@@ -18,13 +69,41 @@ const LoginPage = () => {
         </div>
 
         <div className='bg-gray-800 rounded-2xl shadow-2xl p-8 border border-gray-700'>
+          {error && (
+            <div className='mb-6 p-4 bg-red-900/20 border border-red-500/30 rounded-lg'>
+              <div className='flex items-center space-x-2'>
+                <div className='w-2 h-2 bg-red-500 rounded-full'></div>
+                <p className='text-red-300 text-sm'>{error}</p>
+              </div>
+            </div>
+          )}
+
+          {success && (
+            <div className='mb-6 p-4 bg-green-900/20 border border-green-500/30 rounded-lg'>
+              <div className='flex items-center space-x-2'>
+                <div className='w-2 h-2 bg-green-500 rounded-full'></div>
+                <p className='text-green-300 text-sm'>{success}</p>
+              </div>
+            </div>
+          )}
+
           <button
             onClick={handleGitHubLogin}
-            className='w-full flex items-center justify-center space-x-3 py-4 px-6 bg-gray-900 hover:bg-gray-700 border border-gray-600 rounded-xl text-white font-medium transition-all duration-200 hover:shadow-lg group'
+            disabled={isLoading}
+            className='w-full flex items-center justify-center space-x-3 py-4 px-6 bg-gray-900 hover:bg-gray-700 disabled:bg-gray-800 disabled:cursor-not-allowed border border-gray-600 rounded-xl text-white font-medium transition-all duration-200 hover:shadow-lg group disabled:hover:shadow-none'
           >
-            <Github className='w-6 h-6' />
-            <span className='text-lg'>Continuar con GitHub</span>
-            <ChevronRight className='w-6 h-6 group-hover:translate-x-1 transition-transform text-gray-500 group-hover:text-white  duration-200' />
+            {isLoading ? (
+              <>
+                <Loader2 className='w-6 h-6 animate-spin' />
+                <span className='text-lg'>Iniciando sesión...</span>
+              </>
+            ) : (
+              <>
+                <Github className='w-6 h-6' />
+                <span className='text-lg'>Continuar con GitHub</span>
+                <ChevronRight className='w-6 h-6 group-hover:translate-x-1 transition-transform text-gray-500 group-hover:text-white duration-200' />
+              </>
+            )}
           </button>
 
           <div className='mt-8 flex items-center'>

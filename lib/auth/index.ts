@@ -10,10 +10,14 @@ export const auth = betterAuth({
   }),
   socialProviders: {
     github: {
-      clientId: process.env.GITHUB_CLIENT_ID as string,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+      clientId: process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID || '',
+      clientSecret: process.env.NEXT_GITHUB_CLIENT_SECRET || '',
     },
   },
+  baseURL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL || 'http://localhost:3000',
+  trustedOrigins: [
+    process.env.NEXT_PUBLIC_BETTER_AUTH_URL || 'http://localhost:3000',
+  ],
 });
 
 export type Session = typeof auth.$Infer.Session;
