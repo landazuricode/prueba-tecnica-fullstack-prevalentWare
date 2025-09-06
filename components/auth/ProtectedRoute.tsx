@@ -1,0 +1,58 @@
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import { authClient } from '../../lib/auth/client';
+
+interface ProtectedRouteProps {
+  children: React.ReactNode;
+  redirectTo?: string;
+}
+
+const ProtectedRoute = ({
+  children,
+  redirectTo = '/login',
+}: ProtectedRouteProps) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const session = await authClient.getSession();
+        if (session.data?.session) {
+          setIsAuthenticated(true);
+        } else {
+          setIsAuthenticated(false);
+          router.push(redirectTo);
+        }
+      } catch (error) {
+        console.error('Error checking authentication:', error);
+        setIsAuthenticated(false);
+        router.push(redirectTo);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, [router, redirectTo]);
+
+  if (isLoading) {
+    return (
+      <div className='min-h-screen flex items-center justify-center bg-gray-50'>
+        <div className='text-center'>
+          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4'></div>
+          <p className='text-gray-600'>Verificando autenticación...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  return <>{children}</>;
+};
+
+export default ProtectedRoute;
