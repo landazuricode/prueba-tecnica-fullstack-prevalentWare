@@ -4,9 +4,9 @@ import RoleGuard from '../../components/auth/RoleGuard';
 import { Button } from '@/components/ui/button';
 import { useUserRole } from '@/lib/hooks/useUserRole';
 import { useGet } from '@/lib/hooks/useApi';
-import { Movement } from '@/lib/auth/types';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import Link from 'next/link';
+import type { Movement } from '@/types';
 
 const MovementsPage = () => {
   const { isAdmin } = useUserRole();

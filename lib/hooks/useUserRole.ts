@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { authClient } from '../auth/client';
-import { UserWithRole } from '../auth/types';
+import type { UserWithRole, UserRole, UseUserRoleReturn } from '../../types';
 
-export const useUserRole = () => {
-  const [role, setRole] = useState<string | null>(null);
+export const useUserRole = (): UseUserRoleReturn => {
+  const [role, setRole] = useState<UserRole | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<UserWithRole | null>(null);
 
@@ -13,7 +13,7 @@ export const useUserRole = () => {
         const session = await authClient.getSession();
 
         if (session.data?.user) {
-          const userRole = (session.data.user as any).role || 'ADMIN';
+          const userRole = (session.data.user as UserWithRole).role || 'ADMIN';
           setRole(userRole);
           setUser(session.data.user as UserWithRole);
         } else {

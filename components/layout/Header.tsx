@@ -1,9 +1,5 @@
 import { Menu } from 'lucide-react';
-
-interface HeaderProps {
-  title: string;
-  onMenuClick?: () => void;
-}
+import type { HeaderProps } from '../../types';
 
 const Header = ({ title, onMenuClick }: HeaderProps) => {
   return (

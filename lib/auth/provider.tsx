@@ -2,14 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { authClient } from './client';
-import type { Session } from './index';
-
-interface AuthContextType {
-  session: { data: any; error: any } | null;
-  loading: boolean;
-  signIn: () => Promise<void>;
-  signOut: () => Promise<void>;
-}
+import type { AuthContextType } from '../../types';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 

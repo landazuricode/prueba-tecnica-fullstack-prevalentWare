@@ -1,18 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
+import type { UseApiOptions } from '../../types';
 
-export interface ApiResponse<T> {
-  data: T;
-  message: string;
-  error?: string;
-}
-
-export interface UseApiOptions {
-  immediate?: boolean;
-  onSuccess?: (data: any) => void;
-  onError?: (error: string) => void;
-}
-
-export const useApi = <T = any>(
+export const useApi = <T = unknown>(
   endpoint: string,
   options: UseApiOptions = {
     immediate: true,
@@ -94,7 +83,7 @@ export const useApi = <T = any>(
 };
 
 // Hook específico para GET requests
-export const useGet = <T = any>(
+export const useGet = <T = unknown>(
   endpoint: string,
   options: UseApiOptions = {}
 ) => {
@@ -111,14 +100,14 @@ export const useGet = <T = any>(
 };
 
 // Hook específico para POST requests
-export const usePost = <T = any>(
+export const usePost = <T = unknown>(
   endpoint: string,
   options: UseApiOptions = {}
 ) => {
   const api = useApi<T>(endpoint, options);
 
   const post = useCallback(
-    (body: any) => {
+    (body: unknown) => {
       return api.execute({
         method: 'POST',
         body: JSON.stringify(body),
@@ -134,14 +123,14 @@ export const usePost = <T = any>(
 };
 
 // Hook específico para PUT requests
-export const usePut = <T = any>(
+export const usePut = <T = unknown>(
   endpoint: string,
   options: UseApiOptions = {}
 ) => {
   const api = useApi<T>(endpoint, options);
 
   const put = useCallback(
-    (body: any) => {
+    (body: unknown) => {
       return api.execute({
         method: 'PUT',
         body: JSON.stringify(body),
@@ -157,7 +146,7 @@ export const usePut = <T = any>(
 };
 
 // Hook específico para DELETE requests
-export const useDelete = <T = any>(
+export const useDelete = <T = unknown>(
   endpoint: string,
   options: UseApiOptions = {}
 ) => {

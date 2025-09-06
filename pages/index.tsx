@@ -3,17 +3,21 @@ import ProtectedRoute from '../components/auth/ProtectedRoute';
 import { useUserRole } from '../lib/hooks/useUserRole';
 import Link from 'next/link';
 import { DollarSign, Users, BarChart3, ArrowRight } from 'lucide-react';
+import type { NavigationCard } from '../types';
+
+// Tipo para los iconos de Lucide React
+type LucideIcon = React.ComponentType<{ className?: string }>;
 
 const Home = () => {
-  const { role, isAdmin, isUser } = useUserRole();
+  const { isAdmin } = useUserRole();
 
-  const navigationCards = [
+  const navigationCards: NavigationCard[] = [
     {
       title: 'Ingresos y Egresos',
       description:
         'Registra y gestiona todos tus movimientos financieros de manera organizada',
       href: '/movimientos',
-      icon: DollarSign,
+      icon: DollarSign as LucideIcon,
       gradient: 'from-emerald-500 to-teal-600',
       bgPattern: 'bg-emerald-50',
       iconColor: 'text-emerald-600',
@@ -23,7 +27,7 @@ const Home = () => {
       title: 'Usuarios',
       description: 'Gestiona usuarios, roles y permisos del sistema',
       href: '/usuarios',
-      icon: Users,
+      icon: Users as LucideIcon,
       gradient: 'from-violet-500 to-purple-600',
       bgPattern: 'bg-violet-50',
       iconColor: 'text-violet-600',
@@ -33,7 +37,7 @@ const Home = () => {
       title: 'Reportes',
       description: 'Visualiza reportes detallados y análisis financieros',
       href: '/reportes',
-      icon: BarChart3,
+      icon: BarChart3 as LucideIcon,
       gradient: 'from-amber-500 to-orange-600',
       bgPattern: 'bg-amber-50',
       iconColor: 'text-amber-600',
@@ -55,7 +59,7 @@ const Home = () => {
             </div>
 
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto'>
-              {navigationCards.map((card, index) => {
+              {navigationCards.map((card) => {
                 const IconComponent = card.icon;
                 const isDisabled = !card.available;
 

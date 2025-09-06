@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useGet, usePut } from '@/lib/hooks/useApi';
 import { formatDate } from '@/lib/utils';
-import { useAuth } from '@/lib/auth/provider';
 
 interface UserData {
   id: string;
@@ -25,7 +24,6 @@ interface UpdateUserData {
 }
 
 const MiCuentaPage = () => {
-  const { session } = useAuth();
   const [formData, setFormData] = useState<UpdateUserData>({
     name: '',
     phone: '',

@@ -5,18 +5,16 @@ import ProtectedRoute from '../../components/auth/ProtectedRoute';
 import RoleGuard from '../../components/auth/RoleGuard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useUserRole } from '@/lib/hooks/useUserRole';
 import { usePost } from '@/lib/hooks/useApi';
 import { CreateMovementData } from '@/lib/auth/types';
 
 const NuevoMovimientoPage = () => {
   const router = useRouter();
-  const { isAdmin } = useUserRole();
 
   const [formData, setFormData] = useState<CreateMovementData>({
     concept: '',
     amount: 0,
-    date: new Date().toISOString().split('T')[0], // Fecha actual en formato YYYY-MM-DD
+    date: new Date().toISOString().split('T')[0] || '', // Fecha actual en formato YYYY-MM-DD
     type: 'INCOME',
   });
 

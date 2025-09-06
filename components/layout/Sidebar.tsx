@@ -12,15 +12,11 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { authClient } from '../../lib/auth/client';
 import { useUserRole } from '../../lib/hooks/useUserRole';
-
-interface SidebarProps {
-  isOpen?: boolean;
-  onClose?: () => void;
-}
+import type { SidebarProps } from '../../types';
 
 const Sidebar = ({ isOpen = true, onClose }: SidebarProps) => {
   const router = useRouter();
-  const { role, isAdmin, isUser } = useUserRole();
+  const { isAdmin } = useUserRole();
 
   const handleLogout = async () => {
     try {
@@ -76,7 +72,7 @@ const Sidebar = ({ isOpen = true, onClose }: SidebarProps) => {
       if (!acc[item.section]) {
         acc[item.section] = [];
       }
-      acc[item.section].push(item);
+      acc[item.section]?.push(item);
       return acc;
     },
     {} as Record<string, typeof menuItems>

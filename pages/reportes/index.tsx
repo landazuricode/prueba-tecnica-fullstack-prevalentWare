@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Layout from '../../components/layout/Layout';
 import ProtectedRoute from '../../components/auth/ProtectedRoute';
 import RoleGuard from '../../components/auth/RoleGuard';
@@ -194,9 +194,9 @@ const ReportesPage = () => {
           label: function (context: any) {
             const movement = reportData.chartData[context.dataIndex];
             return [
-              `Concepto: ${movement.concept}`,
-              `Monto: ${formatCurrency(Math.abs(movement.amount))}`,
-              `Tipo: ${movement.type === 'INCOME' ? 'Ingreso' : 'Egreso'}`,
+              `Concepto: ${movement?.concept}`,
+              `Monto: ${formatCurrency(Math.abs(movement?.amount || 0))}`,
+              `Tipo: ${movement?.type === 'INCOME' ? 'Ingreso' : 'Egreso'}`,
             ];
           },
         },

@@ -1,6 +1,16 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
 import { auth } from '../../../lib/auth';
+import type {
+  CreateMovementData,
+  MovementType,
+  ApiError,
+} from '../../../types';
+import {
+  MOVEMENT_TYPES,
+  HTTP_STATUS,
+  API_MESSAGES,
+} from '../../../types/constants';
 
 const prisma = new PrismaClient();
 
@@ -47,8 +57,8 @@ const MovimientosHandler = async (
           },
         });
 
-        res.status(200).json({
-          message: 'Movimientos obtenidos exitosamente',
+        res.status(HTTP_STATUS.OK).json({
+          message: API_MESSAGES.SUCCESS.MOVEMENTS_FOUND,
           data: movements,
         });
       } catch (error) {
@@ -70,30 +80,32 @@ const MovimientosHandler = async (
           });
         }
 
-        const { concept, amount, date, type } = req.body;
+        const { concept, amount, date, type }: CreateMovementData = req.body;
 
         if (!concept || !amount || !date || !type) {
-          return res.status(400).json({
-            message: 'Faltan campos requeridos',
+          const error: ApiError = {
+            message: API_MESSAGES.ERROR.MISSING_FIELDS,
             error: 'concept, amount, date y type son requeridos',
-          });
+          };
+          return res.status(HTTP_STATUS.BAD_REQUEST).json(error);
         }
 
         // Validar tipo de movimiento
-        if (!['INCOME', 'EXPENSE'].includes(type)) {
-          return res.status(400).json({
-            message: 'Tipo de movimiento inválido',
-            error: 'El tipo debe ser INCOME o EXPENSE',
-          });
+        if (!Object.values(MOVEMENT_TYPES).includes(type)) {
+          const error: ApiError = {
+            message: API_MESSAGES.ERROR.INVALID_MOVEMENT_TYPE,
+            error: `El tipo debe ser ${MOVEMENT_TYPES.INCOME} o ${MOVEMENT_TYPES.EXPENSE}`,
+          };
+          return res.status(HTTP_STATUS.BAD_REQUEST).json(error);
         }
 
         // Crear movimiento en la base de datos
         const movement = await prisma.movement.create({
           data: {
             concept,
-            amount: parseFloat(amount),
+            amount: parseFloat(amount.toString()),
             date: new Date(date),
-            type: type as 'INCOME' | 'EXPENSE',
+            type: type as MovementType,
             userId: session.user.id,
           },
           include: {
@@ -101,8 +113,8 @@ const MovimientosHandler = async (
           },
         });
 
-        res.status(201).json({
-          message: 'Movimiento creado exitosamente',
+        res.status(HTTP_STATUS.CREATED).json({
+          message: API_MESSAGES.SUCCESS.MOVEMENT_CREATED,
           data: movement,
         });
       } catch (error) {

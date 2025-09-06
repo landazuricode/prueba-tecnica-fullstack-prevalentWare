@@ -1,17 +1,15 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils';
+import type { ButtonProps } from '../../types';
 
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'default' | 'outline' | 'ghost' | 'link';
-  size?: 'default' | 'sm' | 'lg' | 'icon';
+interface ExtendedButtonProps extends ButtonProps {
   children?: React.ReactNode;
   icon?: React.ReactNode;
   iconPosition?: 'left' | 'right';
   fullWidth?: boolean;
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+const Button = React.forwardRef<HTMLButtonElement, ExtendedButtonProps>(
   (
     {
       className,
@@ -30,8 +28,10 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variants = {
       default: 'bg-blue-500 text-white hover:bg-blue-600',
+      destructive: 'bg-red-500 text-white hover:bg-red-600',
       outline:
         'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
+      secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300',
       ghost: 'hover:bg-accent hover:text-accent-foreground',
       link: 'text-primary underline-offset-4 hover:underline',
     };

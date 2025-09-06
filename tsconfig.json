@@ -12,11 +12,20 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@/types": ["./types"]
     },
-    "target": "esnext"
+    "target": "esnext",
+    "baseUrl": "."
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "types/**/*.ts"],
+  "exclude": ["node_modules", ".next", "out"]
 }
