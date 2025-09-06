@@ -4,6 +4,85 @@ import { auth } from '../../../lib/auth';
 
 const prisma = new PrismaClient();
 
+/**
+ * @swagger
+ * /api/reportes:
+ *   get:
+ *     summary: Obtener reporte financiero
+ *     description: Obtiene un reporte completo con estadísticas financieras, datos para gráficos y lista de movimientos. Requiere autenticación y rol de administrador.
+ *     tags: [Reportes]
+ *     security:
+ *       - sessionAuth: []
+ *     responses:
+ *       200:
+ *         description: Reporte obtenido exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Reporte obtenido exitosamente"
+ *                 data:
+ *                   $ref: '#/components/schemas/ReportData'
+ *             examples:
+ *               success:
+ *                 summary: Reporte exitoso
+ *                 value:
+ *                   message: "Reporte obtenido exitosamente"
+ *                   data:
+ *                     balance: 2500000.75
+ *                     chartData:
+ *                       - id: "mov_1234567890abcdef"
+ *                         concept: "Venta de producto"
+ *                         amount: 150000.50
+ *                         type: "INCOME"
+ *                         date: "2024-01-15T10:30:00Z"
+ *                         user: "Juan Pérez"
+ *                         index: 1
+ *                     statistics:
+ *                       totalIncome: 5000000.00
+ *                       totalExpense: 2500000.25
+ *                       movementCount: 150
+ *                     movements:
+ *                       - id: "mov_1234567890abcdef"
+ *                         concept: "Venta de producto"
+ *                         amount: 150000.50
+ *                         date: "2024-01-15T10:30:00Z"
+ *                         type: "INCOME"
+ *                         userId: "clx1234567890abcdef"
+ *                         user:
+ *                           id: "clx1234567890abcdef"
+ *                           name: "Juan Pérez"
+ *                           email: "juan.perez@ejemplo.com"
+ *                         createdAt: "2024-01-15T10:30:00Z"
+ *                         updatedAt: "2024-01-15T10:30:00Z"
+ *       401:
+ *         description: No autorizado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       403:
+ *         description: Acceso denegado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *             example:
+ *               message: "Acceso denegado"
+ *               error: "Solo los administradores pueden acceder a este recurso"
+ *       500:
+ *         description: Error interno del servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *             example:
+ *               message: "Error interno del servidor"
+ *               error: "Error al obtener reporte"
+ */
 const ReportesHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method } = req;
 

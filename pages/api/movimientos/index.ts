@@ -14,6 +14,146 @@ import {
 
 const prisma = new PrismaClient();
 
+/**
+ * @swagger
+ * /api/movimientos:
+ *   get:
+ *     summary: Obtener todos los movimientos
+ *     description: Obtiene la lista de todos los movimientos financieros. Requiere autenticación.
+ *     tags: [Movimientos]
+ *     security:
+ *       - sessionAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de movimientos obtenida exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Movimientos obtenidos exitosamente"
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Movement'
+ *       401:
+ *         description: No autorizado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Error interno del servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *   post:
+ *     summary: Crear nuevo movimiento
+ *     description: Crea un nuevo movimiento financiero. Requiere autenticación y rol de administrador.
+ *     tags: [Movimientos]
+ *     security:
+ *       - sessionAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               concept:
+ *                 type: string
+ *                 description: Concepto del movimiento
+ *                 example: "Venta de producto"
+ *               amount:
+ *                 type: number
+ *                 format: float
+ *                 description: Monto del movimiento
+ *                 example: 150000.50
+ *               date:
+ *                 type: string
+ *                 format: date-time
+ *                 description: Fecha del movimiento
+ *                 example: "2024-01-15T10:30:00Z"
+ *               type:
+ *                 type: string
+ *                 enum: [INCOME, EXPENSE]
+ *                 description: Tipo de movimiento
+ *                 example: "INCOME"
+ *             required:
+ *               - concept
+ *               - amount
+ *               - date
+ *               - type
+ *           examples:
+ *             income:
+ *               summary: Movimiento de ingreso
+ *               value:
+ *                 concept: "Venta de producto"
+ *                 amount: 150000.50
+ *                 date: "2024-01-15T10:30:00Z"
+ *                 type: "INCOME"
+ *             expense:
+ *               summary: Movimiento de gasto
+ *               value:
+ *                 concept: "Compra de materiales"
+ *                 amount: 75000.00
+ *                 date: "2024-01-15T14:30:00Z"
+ *                 type: "EXPENSE"
+ *     responses:
+ *       201:
+ *         description: Movimiento creado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Movimiento creado exitosamente"
+ *                 data:
+ *                   $ref: '#/components/schemas/Movement'
+ *       400:
+ *         description: Faltan campos requeridos o tipo inválido
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *             examples:
+ *               missingFields:
+ *                 summary: Faltan campos requeridos
+ *                 value:
+ *                   message: "Faltan campos requeridos"
+ *                   error: "concept, amount, date y type son requeridos"
+ *               invalidType:
+ *                 summary: Tipo de movimiento inválido
+ *                 value:
+ *                   message: "Tipo de movimiento inválido"
+ *                   error: "El tipo debe ser INCOME o EXPENSE"
+ *       401:
+ *         description: No autorizado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       403:
+ *         description: Acceso denegado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *             example:
+ *               message: "Acceso denegado"
+ *               error: "Solo los administradores pueden crear movimientos"
+ *       500:
+ *         description: Error interno del servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
 const MovimientosHandler = async (
   req: NextApiRequest,
   res: NextApiResponse

@@ -4,6 +4,142 @@ import { auth } from '../../../lib/auth';
 
 const prisma = new PrismaClient();
 
+/**
+ * @swagger
+ * /api/usuarios:
+ *   get:
+ *     summary: Obtener todos los usuarios
+ *     description: Obtiene la lista de todos los usuarios del sistema. Requiere autenticación y rol de administrador.
+ *     tags: [Usuarios]
+ *     security:
+ *       - sessionAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de usuarios obtenida exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Usuarios obtenidos exitosamente"
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/User'
+ *       401:
+ *         description: No autorizado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *             example:
+ *               message: "No autorizado"
+ *               error: "Debe estar autenticado para acceder a este recurso"
+ *       403:
+ *         description: Acceso denegado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *             example:
+ *               message: "Acceso denegado"
+ *               error: "Solo los administradores pueden acceder a este recurso"
+ *       500:
+ *         description: Error interno del servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *             example:
+ *               message: "Error interno del servidor"
+ *               error: "Error al obtener usuarios"
+ *   put:
+ *     summary: Actualizar usuario
+ *     description: Actualiza los datos de un usuario existente. Requiere autenticación y rol de administrador.
+ *     tags: [Usuarios]
+ *     security:
+ *       - sessionAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: ID del usuario a actualizar
+ *                 example: "clx1234567890abcdef"
+ *               name:
+ *                 type: string
+ *                 description: Nuevo nombre del usuario
+ *                 example: "Juan Carlos Pérez"
+ *               role:
+ *                 type: string
+ *                 enum: [ADMIN, USER]
+ *                 description: Nuevo rol del usuario
+ *                 example: "ADMIN"
+ *             required:
+ *               - id
+ *           examples:
+ *             updateUser:
+ *               summary: Actualizar usuario
+ *               value:
+ *                 id: "clx1234567890abcdef"
+ *                 name: "Juan Carlos Pérez"
+ *                 role: "ADMIN"
+ *     responses:
+ *       200:
+ *         description: Usuario actualizado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Usuario actualizado exitosamente"
+ *                 data:
+ *                   $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Faltan campos requeridos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *             example:
+ *               message: "Faltan campos requeridos"
+ *               error: "El ID del usuario es requerido"
+ *       401:
+ *         description: No autorizado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       403:
+ *         description: Acceso denegado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Usuario no encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *             example:
+ *               message: "Usuario no encontrado"
+ *               error: "El usuario especificado no existe"
+ *       500:
+ *         description: Error interno del servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
 const UsuariosHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method } = req;
 

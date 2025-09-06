@@ -122,6 +122,14 @@ export interface SidebarProps {
   onClose?: () => void;
 }
 
+export interface MenuItem {
+  href: string;
+  label: string;
+  icon: React.ReactElement;
+  section: string;
+  target?: string;
+}
+
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   placeholder?: string;
@@ -223,6 +231,7 @@ export interface NavigationCard {
   bgPattern: string;
   iconColor: string;
   available: boolean;
+  target?: string;
 }
 
 // =============================================================================

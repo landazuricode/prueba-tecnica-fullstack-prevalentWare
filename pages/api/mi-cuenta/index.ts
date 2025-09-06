@@ -4,6 +4,114 @@ import { auth } from '../../../lib/auth';
 
 const prisma = new PrismaClient();
 
+/**
+ * @swagger
+ * /api/mi-cuenta:
+ *   get:
+ *     summary: Obtener perfil del usuario actual
+ *     description: Obtiene los datos del perfil del usuario autenticado actualmente.
+ *     tags: [Mi Cuenta]
+ *     security:
+ *       - sessionAuth: []
+ *     responses:
+ *       200:
+ *         description: Perfil obtenido exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Usuario obtenido exitosamente"
+ *                 data:
+ *                   $ref: '#/components/schemas/User'
+ *       401:
+ *         description: No autorizado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Usuario no encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *             example:
+ *               message: "Usuario no encontrado"
+ *               error: "El usuario no existe"
+ *       500:
+ *         description: Error interno del servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *   put:
+ *     summary: Actualizar perfil del usuario actual
+ *     description: Actualiza los datos del perfil del usuario autenticado actualmente.
+ *     tags: [Mi Cuenta]
+ *     security:
+ *       - sessionAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Nombre completo del usuario
+ *                 example: "Juan Carlos Pérez"
+ *               phone:
+ *                 type: string
+ *                 nullable: true
+ *                 description: Número de teléfono del usuario
+ *                 example: "+57 300 123 4567"
+ *             required:
+ *               - name
+ *           examples:
+ *             updateProfile:
+ *               summary: Actualizar perfil
+ *               value:
+ *                 name: "Juan Carlos Pérez"
+ *                 phone: "+57 300 123 4567"
+ *     responses:
+ *       200:
+ *         description: Perfil actualizado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Perfil actualizado exitosamente"
+ *                 data:
+ *                   $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Faltan campos requeridos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *             example:
+ *               message: "Faltan campos requeridos"
+ *               error: "El nombre es requerido"
+ *       401:
+ *         description: No autorizado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Error interno del servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
 const MiCuentaHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method } = req;
 

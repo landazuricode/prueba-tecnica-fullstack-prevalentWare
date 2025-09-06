@@ -7,12 +7,13 @@ import {
   ChevronRight,
   LogOut,
   ExternalLink,
+  BookOpen,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { authClient } from '../../lib/auth/client';
 import { useUserRole } from '../../lib/hooks/useUserRole';
-import type { SidebarProps } from '../../types';
+import type { SidebarProps, MenuItem } from '../../types';
 
 const Sidebar = ({ isOpen = true, onClose }: SidebarProps) => {
   const router = useRouter();
@@ -31,7 +32,7 @@ const Sidebar = ({ isOpen = true, onClose }: SidebarProps) => {
   };
 
   // Menú base que todos pueden ver
-  const baseMenuItems = [
+  const baseMenuItems: MenuItem[] = [
     {
       href: '/',
       label: 'Inicio',
@@ -44,10 +45,17 @@ const Sidebar = ({ isOpen = true, onClose }: SidebarProps) => {
       icon: <DollarSign size={22} />,
       section: 'Utilidades',
     },
+    {
+      href: '/docs',
+      target: '_blank',
+      label: 'Documentación API',
+      icon: <BookOpen size={22} />,
+      section: 'Utilidades',
+    },
   ];
 
   // Menú solo para administradores
-  const adminMenuItems = [
+  const adminMenuItems: MenuItem[] = [
     {
       href: '/usuarios',
       label: 'Usuarios',
@@ -75,7 +83,7 @@ const Sidebar = ({ isOpen = true, onClose }: SidebarProps) => {
       acc[item.section]?.push(item);
       return acc;
     },
-    {} as Record<string, typeof menuItems>
+    {} as Record<string, MenuItem[]>
   );
 
   return (
@@ -124,6 +132,7 @@ const Sidebar = ({ isOpen = true, onClose }: SidebarProps) => {
                       <Link
                         key={item.href}
                         href={item.href}
+                        target={item?.target || '_self'}
                         className={`
                           group flex items-center justify-between p-3 rounded-lg transition-all duration-200
                           ${
