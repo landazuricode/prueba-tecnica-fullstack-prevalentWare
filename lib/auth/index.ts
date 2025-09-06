@@ -18,6 +18,19 @@ export const auth = betterAuth({
   trustedOrigins: [
     process.env.NEXT_PUBLIC_BETTER_AUTH_URL || 'http://localhost:3000',
   ],
+  user: {
+    additionalFields: {
+      role: {
+        type: 'string',
+        defaultValue: 'ADMIN',
+        required: false,
+      },
+    },
+  },
+  session: {
+    expiresIn: 60 * 60 * 24 * 7, // 7 days
+    updateAge: 60 * 60 * 24, // 1 day
+  },
 });
 
 export type Session = typeof auth.$Infer.Session;

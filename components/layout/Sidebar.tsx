@@ -11,6 +11,7 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { authClient } from '../../lib/auth/client';
+import { useUserRole } from '../../lib/hooks/useUserRole';
 
 interface SidebarProps {
   isOpen?: boolean;
@@ -19,6 +20,7 @@ interface SidebarProps {
 
 const Sidebar = ({ isOpen = true, onClose }: SidebarProps) => {
   const router = useRouter();
+  const { role, isAdmin, isUser } = useUserRole();
 
   const handleLogout = async () => {
     try {
@@ -32,7 +34,8 @@ const Sidebar = ({ isOpen = true, onClose }: SidebarProps) => {
     }
   };
 
-  const menuItems = [
+  // Menú base que todos pueden ver
+  const baseMenuItems = [
     {
       href: '/',
       label: 'Inicio',
@@ -45,19 +48,28 @@ const Sidebar = ({ isOpen = true, onClose }: SidebarProps) => {
       icon: <DollarSign size={22} />,
       section: 'Utilidades',
     },
+  ];
+
+  // Menú solo para administradores
+  const adminMenuItems = [
     {
       href: '/usuarios',
       label: 'Usuarios',
       icon: <Users size={22} />,
-      section: 'Utilidades',
+      section: 'Administración',
     },
     {
       href: '/reportes',
       label: 'Reportes',
       icon: <BarChart size={22} />,
-      section: 'Utilidades',
+      section: 'Administración',
     },
   ];
+
+  // Combinar menús según el rol
+  const menuItems = isAdmin
+    ? [...baseMenuItems, ...adminMenuItems]
+    : baseMenuItems;
 
   const groupedItems = menuItems.reduce(
     (acc, item) => {
