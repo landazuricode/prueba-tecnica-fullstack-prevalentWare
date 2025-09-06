@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { authClient } from '../../lib/auth/client';
 
 interface SidebarProps {
   isOpen?: boolean;
@@ -18,6 +19,15 @@ interface SidebarProps {
 
 const Sidebar = ({ isOpen = true, onClose }: SidebarProps) => {
   const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await authClient.signOut();
+      router.push('/login');
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+    }
+  };
 
   const menuItems = [
     {
@@ -144,16 +154,16 @@ const Sidebar = ({ isOpen = true, onClose }: SidebarProps) => {
                   </div>
                   <ChevronRight size={22} color='#787F8C' />
                 </Link>
-                <Link
-                  href='#'
-                  className='group flex items-center justify-between p-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-200'
+                <button
+                  onClick={handleLogout}
+                  className='group flex items-center justify-between p-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-200 w-full text-left'
                 >
                   <div className='flex items-center space-x-3'>
                     <span className='text-lg'>{<LogOut size={22} />}</span>
                     <span className='text-sm font-medium'>Cerrar sesión</span>
                   </div>
                   <ChevronRight size={22} color='#787F8C' />
-                </Link>
+                </button>
               </div>
             </div>
           </nav>
