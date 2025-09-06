@@ -160,7 +160,7 @@ const Sidebar = ({ isOpen = true, onClose }: SidebarProps) => {
               </h3>
               <div className='space-y-1'>
                 <Link
-                  href='#'
+                  href='/mi-cuenta'
                   className='group flex items-center justify-between p-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-200'
                 >
                   <div className='flex items-center space-x-3'>
