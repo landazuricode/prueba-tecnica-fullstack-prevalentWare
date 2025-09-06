@@ -14,16 +14,17 @@ datasource db {
 }
 
 model User {
-  id            String    @id
+  id            String     @id
   name          String
   email         String
   emailVerified Boolean
   image         String?
-  role          String    @default("ADMIN")
+  role          String     @default("ADMIN")
   createdAt     DateTime
   updatedAt     DateTime
   sessions      Session[]
   accounts      Account[]
+  movements     Movement[]
 
   @@unique([email])
   @@map("user")
@@ -72,4 +73,23 @@ model Verification {
   updatedAt  DateTime?
 
   @@map("verification")
+}
+
+model Movement {
+  id        String       @id @default(cuid())
+  concept   String
+  amount    Float
+  date      DateTime
+  type      MovementType
+  userId    String
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@map("movement")
+}
+
+enum MovementType {
+  INCOME
+  EXPENSE
 }

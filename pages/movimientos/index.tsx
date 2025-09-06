@@ -3,9 +3,62 @@ import ProtectedRoute from '../../components/auth/ProtectedRoute';
 import RoleGuard from '../../components/auth/RoleGuard';
 import { Button } from '@/components/ui/button';
 import { useUserRole } from '@/lib/hooks/useUserRole';
+import { useGet } from '@/lib/hooks/useApi';
+import { Movement } from '@/lib/auth/types';
+import { formatCurrency, formatDate } from '@/lib/utils';
 
 const MovementsPage = () => {
   const { isAdmin } = useUserRole();
+  const {
+    data: movements = [],
+    isLoading,
+    error,
+  } = useGet<Movement[]>('/api/movimientos', {
+    immediate: true,
+  });
+
+  if (isLoading) {
+    return (
+      <ProtectedRoute>
+        <RoleGuard allowedRoles={['ADMIN', 'USER']}>
+          <Layout title='Gestión de Movimientos'>
+            <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6'>
+              <div className='flex justify-center items-center h-64'>
+                <div className='text-gray-500'>Cargando movimientos...</div>
+              </div>
+            </div>
+          </Layout>
+        </RoleGuard>
+      </ProtectedRoute>
+    );
+  }
+
+  if (error) {
+    return (
+      <ProtectedRoute>
+        <RoleGuard allowedRoles={['ADMIN', 'USER']}>
+          <Layout title='Gestión de Movimientos'>
+            <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6'>
+              <div className='flex flex-col justify-center items-center h-64 space-y-4'>
+                <div className='text-red-500 text-center'>
+                  <div className='font-semibold'>
+                    Error al cargar movimientos
+                  </div>
+                  <div className='text-sm mt-2'>{error}</div>
+                </div>
+                <button
+                  onClick={() => window.location.reload()}
+                  className='px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600'
+                >
+                  Reintentar
+                </button>
+              </div>
+            </div>
+          </Layout>
+        </RoleGuard>
+      </ProtectedRoute>
+    );
+  }
 
   return (
     <ProtectedRoute>
@@ -38,20 +91,40 @@ const MovementsPage = () => {
                   </tr>
                 </thead>
                 <tbody className='bg-white divide-y divide-gray-200'>
-                  <tr>
-                    <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-900'>
-                      Hello World - Ejemplo de ingreso
-                    </td>
-                    <td className='px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium'>
-                      +$1,000.00
-                    </td>
-                    <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>
-                      2024-01-15
-                    </td>
-                    <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>
-                      Usuario Demo
-                    </td>
-                  </tr>
+                  {movements?.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan={4}
+                        className='px-6 py-8 text-center text-gray-500'
+                      >
+                        No hay movimientos registrados
+                      </td>
+                    </tr>
+                  ) : (
+                    movements?.map((movement) => (
+                      <tr key={movement?.id}>
+                        <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-900'>
+                          {movement?.concept}
+                        </td>
+                        <td
+                          className={`px-6 py-4 whitespace-nowrap text-sm font-medium ${
+                            movement?.type === 'INCOME'
+                              ? 'text-green-600'
+                              : 'text-red-600'
+                          }`}
+                        >
+                          {movement?.type === 'INCOME' ? '+' : '-'}
+                          {formatCurrency(Math.abs(movement.amount))}
+                        </td>
+                        <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>
+                          {formatDate(movement?.date)}
+                        </td>
+                        <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>
+                          {movement?.user?.name}
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>

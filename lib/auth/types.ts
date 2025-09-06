@@ -29,3 +29,27 @@ export interface SessionWithRole {
   };
   user: UserWithRole;
 }
+
+// Tipos para movimientos
+export interface Movement {
+  id: string;
+  concept: string;
+  amount: number;
+  date: Date;
+  type: 'INCOME' | 'EXPENSE';
+  userId: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CreateMovementData {
+  concept: string;
+  amount: number;
+  date: string;
+  type: 'INCOME' | 'EXPENSE';
+}
