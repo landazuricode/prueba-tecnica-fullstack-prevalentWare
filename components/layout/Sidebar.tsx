@@ -23,9 +23,12 @@ const Sidebar = ({ isOpen = true, onClose }: SidebarProps) => {
   const handleLogout = async () => {
     try {
       await authClient.signOut();
-      router.push('/login');
+      // Forzar recarga de la página para limpiar el estado
+      window.location.href = '/login';
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
+      // Si hay error, redirigir de todas formas
+      window.location.href = '/login';
     }
   };
 

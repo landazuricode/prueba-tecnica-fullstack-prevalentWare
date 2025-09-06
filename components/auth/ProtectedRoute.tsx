@@ -13,9 +13,12 @@ const ProtectedRoute = ({
 }: ProtectedRouteProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [hasChecked, setHasChecked] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
+    if (hasChecked) return;
+
     const checkAuth = async () => {
       try {
         const session = await authClient.getSession();
@@ -23,19 +26,24 @@ const ProtectedRoute = ({
           setIsAuthenticated(true);
         } else {
           setIsAuthenticated(false);
-          router.push(redirectTo);
+          if (router.pathname !== redirectTo) {
+            router.push(redirectTo);
+          }
         }
       } catch (error) {
         console.error('Error checking authentication:', error);
         setIsAuthenticated(false);
-        router.push(redirectTo);
+        if (router.pathname !== redirectTo) {
+          router.push(redirectTo);
+        }
       } finally {
         setIsLoading(false);
+        setHasChecked(true);
       }
     };
 
     checkAuth();
-  }, [router, redirectTo]);
+  }, [router, redirectTo, hasChecked]);
 
   if (isLoading) {
     return (

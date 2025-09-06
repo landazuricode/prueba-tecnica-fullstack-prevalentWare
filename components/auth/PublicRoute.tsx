@@ -10,15 +10,20 @@ interface PublicRouteProps {
 const PublicRoute = ({ children, redirectTo = '/' }: PublicRouteProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [hasChecked, setHasChecked] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
+    if (hasChecked) return;
+
     const checkAuth = async () => {
       try {
         const session = await authClient.getSession();
         if (session.data?.session) {
           setIsAuthenticated(true);
-          router.push(redirectTo);
+          if (router.pathname !== redirectTo) {
+            router.push(redirectTo);
+          }
         } else {
           setIsAuthenticated(false);
         }
@@ -27,11 +32,12 @@ const PublicRoute = ({ children, redirectTo = '/' }: PublicRouteProps) => {
         setIsAuthenticated(false);
       } finally {
         setIsLoading(false);
+        setHasChecked(true);
       }
     };
 
     checkAuth();
-  }, [router, redirectTo]);
+  }, [router, redirectTo, hasChecked]);
 
   if (isLoading) {
     return (
