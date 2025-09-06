@@ -2,6 +2,17 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  // Configuración para imágenes externas
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'www.prevalentware.com',
+        port: '',
+        pathname: '/wp-content/uploads/**',
+      },
+    ],
+  },
   // Suprimir warnings específicos de Swagger UI
   webpack: (config, { dev, isServer }) => {
     if (dev && !isServer) {
