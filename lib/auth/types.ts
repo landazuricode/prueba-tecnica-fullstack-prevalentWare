@@ -7,4 +7,4 @@ export type {
   SessionWithRole,
   Movement,
   CreateMovementData,
-} from '../../types';
+} from '@/types';

@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import type { UseApiOptions } from '../../types';
+import type { UseApiOptions } from '@/types';
 
 export const useApi = <T = unknown>(
   endpoint: string,
@@ -27,7 +27,7 @@ export const useApi = <T = unknown>(
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
-          console.error('API Error:', response.status, errorData);
+          // API Error
           const errorMessage =
             errorData.error ||
             `Error ${response.status}: ${response.statusText}`;
@@ -48,7 +48,7 @@ export const useApi = <T = unknown>(
       } catch (err) {
         const errorMessage =
           err instanceof Error ? err.message : 'Error desconocido';
-        console.error(`Error in ${endpoint}:`, err);
+        // Error in API call
         setError(errorMessage);
         options.onError?.(errorMessage);
         throw err;
@@ -56,7 +56,7 @@ export const useApi = <T = unknown>(
         setIsLoading(false);
       }
     },
-    [endpoint, options.onSuccess, options.onError]
+    [endpoint, options]
   );
 
   const reset = useCallback(() => {
@@ -71,7 +71,7 @@ export const useApi = <T = unknown>(
       execute();
     }
     // Solo ejecutar una vez al montar, no cuando execute cambie
-  }, [endpoint, options.immediate]);
+  }, [endpoint, options.immediate, execute]);
 
   return {
     data,
@@ -89,9 +89,7 @@ export const useGet = <T = unknown>(
 ) => {
   const api = useApi<T>(endpoint, options);
 
-  const fetch = useCallback(() => {
-    return api.execute({ method: 'GET' });
-  }, [api.execute]);
+  const fetch = useCallback(() => api.execute({ method: 'GET' }), [api]);
 
   return {
     ...api,
@@ -107,13 +105,12 @@ export const usePost = <T = unknown>(
   const api = useApi<T>(endpoint, options);
 
   const post = useCallback(
-    (body: unknown) => {
-      return api.execute({
+    (body: unknown) =>
+      api.execute({
         method: 'POST',
         body: JSON.stringify(body),
-      });
-    },
-    [api.execute]
+      }),
+    [api]
   );
 
   return {
@@ -130,13 +127,12 @@ export const usePut = <T = unknown>(
   const api = useApi<T>(endpoint, options);
 
   const put = useCallback(
-    (body: unknown) => {
-      return api.execute({
+    (body: unknown) =>
+      api.execute({
         method: 'PUT',
         body: JSON.stringify(body),
-      });
-    },
-    [api.execute]
+      }),
+    [api]
   );
 
   return {
@@ -152,9 +148,7 @@ export const useDelete = <T = unknown>(
 ) => {
   const api = useApi<T>(endpoint, options);
 
-  const del = useCallback(() => {
-    return api.execute({ method: 'DELETE' });
-  }, [api.execute]);
+  const del = useCallback(() => api.execute({ method: 'DELETE' }), [api]);
 
   return {
     ...api,

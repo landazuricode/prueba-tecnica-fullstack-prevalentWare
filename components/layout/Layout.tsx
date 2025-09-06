@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import Sidebar from './Sidebar';
-import Header from './Header';
-import type { LayoutProps } from '../../types';
+import { Sidebar } from './Sidebar';
+import { Header } from './Header';
+import type { LayoutProps } from '@/types';
 
 const Layout = ({ children, title }: LayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -23,4 +23,4 @@ const Layout = ({ children, title }: LayoutProps) => {
   );
 };
 
-export default Layout;
+export { Layout };

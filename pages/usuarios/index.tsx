@@ -1,6 +1,7 @@
-import Layout from '../../components/layout/Layout';
-import ProtectedRoute from '../../components/auth/ProtectedRoute';
-import RoleGuard from '../../components/auth/RoleGuard';
+import Image from 'next/image';
+import { Layout } from '@/components/layout/Layout';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { RoleGuard } from '@/components/auth/RoleGuard';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -32,6 +33,110 @@ import {
   UserCheck,
 } from 'lucide-react';
 import Link from 'next/link';
+
+// Component for user avatar section
+const UserAvatar = ({ user }: { user: UserWithRole }) => (
+  <div className='flex items-center space-x-3'>
+    <div className='w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center'>
+      <Image
+        src={user?.image || '/default-avatar.png'}
+        alt={`Avatar de ${user?.name}`}
+        width={32}
+        height={32}
+        className='h-full w-full rounded-full object-cover'
+      />
+    </div>
+    <div>
+      <div className='font-medium'>{user?.name}</div>
+    </div>
+  </div>
+);
+
+// Component for user contact information
+const UserContact = ({ user }: { user: UserWithRole }) => (
+  <div className='space-y-1'>
+    <div className='flex items-center space-x-2 text-sm'>
+      <Mail className='h-3 w-3 text-muted-foreground' />
+      <span>{user?.email}</span>
+    </div>
+    {user?.phone && (
+      <div className='flex items-center space-x-2 text-sm text-muted-foreground'>
+        <Phone className='h-3 w-3' />
+        <span>{user.phone}</span>
+      </div>
+    )}
+  </div>
+);
+
+// Component for user role badge
+const UserRoleBadge = ({ user }: { user: UserWithRole }) => (
+  <Badge
+    variant={user?.role === 'ADMIN' ? 'default' : 'secondary'}
+    className='flex items-center space-x-1 w-fit'
+  >
+    {user?.role === 'ADMIN' ? (
+      <Shield className='h-3 w-3' />
+    ) : (
+      <UserCheck className='h-3 w-3' />
+    )}
+    <span>{user?.role === 'ADMIN' ? 'Administrador' : 'Usuario'}</span>
+  </Badge>
+);
+
+// Component for user registration date
+const UserRegistrationDate = ({ user }: { user: UserWithRole }) => (
+  <div className='flex items-center space-x-2 text-sm text-muted-foreground'>
+    <Calendar className='h-3 w-3' />
+    <span>{formatDate(user?.createdAt)}</span>
+  </div>
+);
+
+// Component for user actions
+const UserActions = ({
+  user,
+  currentUserId,
+}: {
+  user: UserWithRole;
+  currentUserId?: string | undefined;
+}) => (
+  <Link
+    href={
+      user?.id === currentUserId ? '/mi-cuenta' : `/usuarios/editar/${user?.id}`
+    }
+  >
+    <Button size='sm' variant='outline' className='flex items-center space-x-1'>
+      <Edit className='h-3 w-3' />
+      <span>Editar</span>
+    </Button>
+  </Link>
+);
+
+// Component for individual user table row
+const UserTableRow = ({
+  user,
+  currentUserId,
+}: {
+  user: UserWithRole;
+  currentUserId?: string | undefined;
+}) => (
+  <TableRow key={user?.id} className='hover:bg-muted/50'>
+    <TableCell>
+      <UserAvatar user={user} />
+    </TableCell>
+    <TableCell>
+      <UserContact user={user} />
+    </TableCell>
+    <TableCell>
+      <UserRoleBadge user={user} />
+    </TableCell>
+    <TableCell>
+      <UserRegistrationDate user={user} />
+    </TableCell>
+    <TableCell>
+      <UserActions user={user} currentUserId={currentUserId} />
+    </TableCell>
+  </TableRow>
+);
 
 const UsuariosPage = () => {
   const { session } = useAuth();
@@ -131,85 +236,11 @@ const UsuariosPage = () => {
                         </TableRow>
                       ) : (
                         users?.map((user) => (
-                          <TableRow
+                          <UserTableRow
                             key={user?.id}
-                            className='hover:bg-muted/50'
-                          >
-                            <TableCell>
-                              <div className='flex items-center space-x-3'>
-                                <div className='w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center'>
-                                  <img
-                                    src={user?.image}
-                                    className='h-full w-full rounded-full'
-                                  />
-                                </div>
-                                <div>
-                                  <div className='font-medium'>
-                                    {user?.name}
-                                  </div>
-                                </div>
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <div className='space-y-1'>
-                                <div className='flex items-center space-x-2 text-sm'>
-                                  <Mail className='h-3 w-3 text-muted-foreground' />
-                                  <span>{user?.email}</span>
-                                </div>
-                                {user?.phone && (
-                                  <div className='flex items-center space-x-2 text-sm text-muted-foreground'>
-                                    <Phone className='h-3 w-3' />
-                                    <span>{user.phone}</span>
-                                  </div>
-                                )}
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <Badge
-                                variant={
-                                  user?.role === 'ADMIN'
-                                    ? 'default'
-                                    : 'secondary'
-                                }
-                                className='flex items-center space-x-1 w-fit'
-                              >
-                                {user?.role === 'ADMIN' ? (
-                                  <Shield className='h-3 w-3' />
-                                ) : (
-                                  <UserCheck className='h-3 w-3' />
-                                )}
-                                <span>
-                                  {user?.role === 'ADMIN'
-                                    ? 'Administrador'
-                                    : 'Usuario'}
-                                </span>
-                              </Badge>
-                            </TableCell>
-                            <TableCell>
-                              <div className='flex items-center space-x-2 text-sm text-muted-foreground'>
-                                <Calendar className='h-3 w-3' />
-                                <span>{formatDate(user?.createdAt)}</span>
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <Link
-                                href={
-                                  user?.id === currentUserId
-                                    ? '/mi-cuenta'
-                                    : `/usuarios/editar/${user?.id}`
-                                }
-                              >
-                                <Button
-                                  size='sm'
-                                  variant='outline'
-                                  className='flex items-center space-x-1'
-                                >
-                                  <Edit className='h-3 w-3' />
-                                  <span>Editar</span>
-                                </Button>
-                              </Link>
-                            </TableCell>
-                          </TableRow>
+                            user={user}
+                            currentUserId={currentUserId}
+                          />
                         ))
                       )}
                     </TableBody>

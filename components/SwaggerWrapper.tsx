@@ -1,39 +1,14 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
+// @ts-expect-error - swagger-ui-react doesn't have proper TypeScript declarations
 import SwaggerUI from 'swagger-ui-react';
 import 'swagger-ui-react/swagger-ui.css';
 
 interface SwaggerWrapperProps {
-  spec: any;
+  spec: Record<string, unknown>;
 }
 
-export default function SwaggerWrapper({ spec }: SwaggerWrapperProps) {
+const SwaggerWrapper = ({ spec }: SwaggerWrapperProps) => {
   const swaggerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    // Suprimir warnings de React en la consola
-    const originalWarn = console.warn;
-    console.warn = (message: string, ...args: any[]) => {
-      if (
-        message.includes('UNSAFE_componentWillReceiveProps') ||
-        message.includes('componentWillReceiveProps') ||
-        message.includes('ModelCollapse') ||
-        message.includes('OperationContainer')
-      ) {
-        return;
-      }
-      originalWarn(message, ...args);
-    };
-
-    // Limpiar warnings después de un tiempo
-    const timer = setTimeout(() => {
-      console.warn = originalWarn;
-    }, 5000);
-
-    return () => {
-      clearTimeout(timer);
-      console.warn = originalWarn;
-    };
-  }, []);
 
   return (
     <div ref={swaggerRef} className='swagger-wrapper'>
@@ -45,7 +20,7 @@ export default function SwaggerWrapper({ spec }: SwaggerWrapperProps) {
         displayRequestDuration={true}
         tryItOutEnabled={true}
         supportedSubmitMethods={['get', 'post', 'put', 'delete', 'patch']}
-        requestInterceptor={(request) => {
+        requestInterceptor={(request: { headers: Record<string, string> }) => {
           // Agregar headers de autenticación si están disponibles
           if (typeof window !== 'undefined') {
             const token = localStorage.getItem('better-auth.session_token');
@@ -69,4 +44,6 @@ export default function SwaggerWrapper({ spec }: SwaggerWrapperProps) {
       />
     </div>
   );
-}
+};
+
+export { SwaggerWrapper };

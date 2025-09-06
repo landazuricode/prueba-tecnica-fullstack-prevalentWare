@@ -1,6 +1,5 @@
-import Layout from '../../components/layout/Layout';
-import ProtectedRoute from '../../components/auth/ProtectedRoute';
-import RoleGuard from '../../components/auth/RoleGuard';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { RoleGuard } from '@/components/auth/RoleGuard';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -23,6 +22,7 @@ import { formatCurrency, formatDate } from '@/lib/utils';
 import Link from 'next/link';
 import { Plus } from 'lucide-react';
 import type { Movement } from '@/types';
+import { Layout } from '@/components/layout/Layout';
 
 const MovementsPage = () => {
   const { isAdmin } = useUserRole();

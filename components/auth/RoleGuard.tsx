@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { authClient } from '../../lib/auth/client';
+import { authClient } from '@/lib/auth/client';
 
 interface RoleGuardProps {
   children: React.ReactNode;
@@ -25,7 +25,9 @@ const RoleGuard = ({
       try {
         const session = await authClient.getSession();
         if (session.data?.user) {
-          const role = (session.data.user as any).role || 'ADMIN';
+          const role =
+            ((session.data.user as Record<string, unknown>).role as string) ||
+            'ADMIN';
           setUserRole(role);
 
           if (allowedRoles.includes(role)) {
@@ -40,8 +42,7 @@ const RoleGuard = ({
           setHasAccess(false);
           router.push('/login');
         }
-      } catch (error) {
-        console.error('Error checking role:', error);
+      } catch {
         setHasAccess(false);
         router.push('/login');
       } finally {
@@ -93,4 +94,4 @@ const RoleGuard = ({
   return <>{children}</>;
 };
 
-export default RoleGuard;
+export { RoleGuard };

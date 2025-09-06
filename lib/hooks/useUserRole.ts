@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { authClient } from '../auth/client';
-import type { UserWithRole, UserRole, UseUserRoleReturn } from '../../types';
-import { getRolePermissions } from '../auth/middleware';
+import { authClient } from '@/lib/auth/client';
+import type { UserWithRole, UserRole, UseUserRoleReturn } from '@/types';
+import { getRolePermissions } from '@/lib/auth/client-utils';
 
 export const useUserRole = (): UseUserRoleReturn => {
   const [role, setRole] = useState<UserRole | null>(null);
@@ -21,8 +21,7 @@ export const useUserRole = (): UseUserRoleReturn => {
           setRole(null);
           setUser(null);
         }
-      } catch (error) {
-        console.error('Error getting user role:', error);
+      } catch {
         setRole(null);
         setUser(null);
       } finally {

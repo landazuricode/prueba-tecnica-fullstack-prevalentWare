@@ -69,7 +69,7 @@ const LoginHandler = (req: NextApiRequest, res: NextApiResponse) => {
   const { method } = req;
 
   switch (method) {
-    case 'POST':
+    case 'POST': {
       // Hello World - Procesar login con GitHub
       const { githubCode, githubToken } = req.body;
 
@@ -99,6 +99,7 @@ const LoginHandler = (req: NextApiRequest, res: NextApiResponse) => {
         },
       });
       break;
+    }
 
     default:
       res.setHeader('Allow', ['POST']);

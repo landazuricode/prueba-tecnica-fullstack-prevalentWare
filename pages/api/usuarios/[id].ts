@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
-import { auth } from '../../../lib/auth';
+import { auth } from '@/lib/auth';
 
 const prisma = new PrismaClient();
 
@@ -79,10 +79,9 @@ const UsuarioHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   let session;
   try {
     session = await auth.api.getSession({
-      headers: req.headers as any,
+      headers: req.headers as Record<string, string> | unknown as Headers,
     });
-  } catch (error) {
-    console.error('Error getting session:', error);
+  } catch {
     return res.status(401).json({
       message: 'No autorizado',
       error: 'Error de autenticación',
@@ -130,8 +129,7 @@ const UsuarioHandler = async (req: NextApiRequest, res: NextApiResponse) => {
           message: 'Usuario obtenido exitosamente',
           data: user,
         });
-      } catch (error) {
-        console.error('Error fetching user:', error);
+      } catch {
         res.status(500).json({
           message: 'Error interno del servidor',
           error: 'Error al obtener usuario',

@@ -4,7 +4,8 @@ import { ChevronRight, Github, Loader2 } from 'lucide-react';
 import { useAuth } from '@/lib/auth/provider';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import PublicRoute from '../components/auth/PublicRoute';
+import Image from 'next/image';
+import { PublicRoute } from '@/components/auth/PublicRoute';
 
 const LoginPage = () => {
   const { signIn, session, loading: authLoading } = useAuth();
@@ -37,8 +38,7 @@ const LoginPage = () => {
 
       // Esto redirigirá a GitHub OAuth
       await signIn();
-    } catch (error) {
-      console.error('Login error:', error);
+    } catch {
       setError('Error al iniciar sesión. Por favor, inténtalo de nuevo.');
       setIsLoading(false);
     }
@@ -62,10 +62,13 @@ const LoginPage = () => {
       <div className='min-h-screen bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8'>
         <div className='max-w-md w-full space-y-8'>
           <div className='text-center'>
-            <img
+            <Image
               src='https://www.prevalentware.com/wp-content/uploads/2024/07/logo-prevalentware.png'
               alt='PrevalentWare'
-              className=' mx-auto'
+              width={200}
+              height={64}
+              className='mx-auto h-16 w-auto'
+              priority
             />
             <p className='mt-6 text-lg text-gray-300'></p>
           </div>

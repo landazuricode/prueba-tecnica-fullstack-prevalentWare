@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { authClient } from '../../lib/auth/client';
+import { authClient } from '@/lib/auth/client';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -30,8 +30,7 @@ const ProtectedRoute = ({
             router.push(redirectTo);
           }
         }
-      } catch (error) {
-        console.error('Error checking authentication:', error);
+      } catch {
         setIsAuthenticated(false);
         if (router.pathname !== redirectTo) {
           router.push(redirectTo);
@@ -63,4 +62,4 @@ const ProtectedRoute = ({
   return <>{children}</>;
 };
 
-export default ProtectedRoute;
+export { ProtectedRoute };

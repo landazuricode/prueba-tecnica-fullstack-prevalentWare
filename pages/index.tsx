@@ -1,6 +1,6 @@
-import Layout from '../components/layout/Layout';
-import ProtectedRoute from '../components/auth/ProtectedRoute';
-import { useUserRole } from '../lib/hooks/useUserRole';
+import { Layout } from '@/components/layout/Layout';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { useUserRole } from '@/lib/hooks/useUserRole';
 import {
   Card,
   CardContent,
@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   DollarSign,
   Users,
@@ -17,7 +18,7 @@ import {
   ArrowRight,
   UserCheck,
 } from 'lucide-react';
-import type { NavigationCard } from '../types';
+import type { NavigationCard } from '@/types';
 
 // Tipo para los iconos de Lucide React
 type LucideIcon = React.ComponentType<{ className?: string }>;
@@ -66,10 +67,13 @@ const Home = () => {
           {/* Header con logo */}
           <Card className='bg-gradient-to-r from-slate-900 to-slate-800 border-0'>
             <CardContent className='flex justify-center py-8'>
-              <img
+              <Image
                 src='https://www.prevalentware.com/wp-content/uploads/2024/07/logo-prevalentware.png'
                 alt='PrevalentWare'
-                className='h-16'
+                width={200}
+                height={64}
+                className='h-16 w-auto'
+                priority
               />
             </CardContent>
           </Card>

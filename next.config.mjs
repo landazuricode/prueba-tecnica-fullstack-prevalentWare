@@ -13,6 +13,29 @@ const nextConfig = {
         /OperationContainer/,
       ];
     }
+
+    // Configuración para manejar módulos de Node.js en el cliente
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+        crypto: false,
+        stream: false,
+        url: false,
+        zlib: false,
+        http: false,
+        https: false,
+        assert: false,
+        os: false,
+        path: false,
+        sqlite: false,
+        'node:sqlite': false,
+        'better-sqlite3': false,
+      };
+    }
+
     return config;
   },
   // Configuración para Swagger UI

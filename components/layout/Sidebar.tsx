@@ -11,9 +11,9 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { authClient } from '../../lib/auth/client';
-import { useUserRole } from '../../lib/hooks/useUserRole';
-import type { SidebarProps, MenuItem } from '../../types';
+import { authClient } from '@/lib/auth/client';
+import { useUserRole } from '@/lib/hooks/useUserRole';
+import type { SidebarProps, MenuItem } from '@/types';
 
 const Sidebar = ({ isOpen = true, onClose }: SidebarProps) => {
   const router = useRouter();
@@ -24,8 +24,7 @@ const Sidebar = ({ isOpen = true, onClose }: SidebarProps) => {
       await authClient.signOut();
       // Forzar recarga de la página para limpiar el estado
       window.location.href = '/login';
-    } catch (error) {
-      console.error('Error al cerrar sesión:', error);
+    } catch {
       // Si hay error, redirigir de todas formas
       window.location.href = '/login';
     }
@@ -193,4 +192,4 @@ const Sidebar = ({ isOpen = true, onClose }: SidebarProps) => {
   );
 };
 
-export default Sidebar;
+export { Sidebar };

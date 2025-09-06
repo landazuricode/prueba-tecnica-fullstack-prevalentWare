@@ -16,6 +16,34 @@ interface PermissionGuardProps {
   showFallback?: boolean;
 }
 
+// Helper function to check if user has required roles
+const hasRequiredRoles = (
+  userRole: UserRole,
+  requiredRoles: UserRole[]
+): boolean => requiredRoles.length === 0 || requiredRoles.includes(userRole);
+
+// Helper function to check if user has required permissions
+const hasRequiredPermissions = (
+  userPermissions: Record<string, boolean>,
+  requiredPermissions: Record<string, boolean | undefined>
+): boolean =>
+  Object.entries(requiredPermissions).every(([permission, required]) => {
+    if (required === undefined) return true;
+    return userPermissions[permission] === required;
+  });
+
+// Helper function to render fallback or null
+const renderFallback = (
+  showFallback: boolean,
+  fallback: ReactNode
+): ReactNode => (showFallback ? <>{fallback}</> : null);
+
+// Helper function to render loading state
+const renderLoading = (showFallback: boolean): ReactNode =>
+  showFallback ? (
+    <div className='animate-pulse bg-gray-200 rounded h-4 w-full' />
+  ) : null;
+
 /**
  * Componente que verifica permisos específicos antes de renderizar contenido
  */
@@ -30,34 +58,25 @@ const PermissionGuard = ({
 
   // Mostrar loading mientras se cargan los permisos
   if (isLoading) {
-    return showFallback ? (
-      <div className='animate-pulse bg-gray-200 rounded h-4 w-full' />
-    ) : null;
+    return renderLoading(showFallback);
   }
 
   // Si no hay permisos, no mostrar nada
   if (!permissions || !role) {
-    return showFallback ? <>{fallback}</> : null;
+    return renderFallback(showFallback, fallback);
   }
 
   // Verificar roles requeridos
-  if (requiredRoles.length > 0 && !requiredRoles.includes(role)) {
-    return showFallback ? <>{fallback}</> : null;
+  if (!hasRequiredRoles(role, requiredRoles)) {
+    return renderFallback(showFallback, fallback);
   }
 
   // Verificar permisos específicos
-  const hasRequiredPermissions = Object.entries(requiredPermissions).every(
-    ([permission, required]) => {
-      if (required === undefined) return true;
-      return permissions[permission as keyof typeof permissions] === required;
-    }
-  );
-
-  if (!hasRequiredPermissions) {
-    return showFallback ? <>{fallback}</> : null;
+  if (!hasRequiredPermissions(permissions, requiredPermissions)) {
+    return renderFallback(showFallback, fallback);
   }
 
   return <>{children}</>;
 };
 
-export default PermissionGuard;
+export { PermissionGuard };

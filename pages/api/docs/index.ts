@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { swaggerSpec } from '../../../lib/swagger';
+import { swaggerSpec } from '@/lib/swagger';
 
 const DocsHandler = (req: NextApiRequest, res: NextApiResponse) => {
   const { method } = req;

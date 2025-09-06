@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import Layout from '../../components/layout/Layout';
-import ProtectedRoute from '../../components/auth/ProtectedRoute';
-import RoleGuard from '../../components/auth/RoleGuard';
+import { Layout } from '@/components/layout/Layout';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { RoleGuard } from '@/components/auth/RoleGuard';
 import { Button } from '@/components/ui/button';
 import { useGet } from '@/lib/hooks/useApi';
 import {
@@ -12,6 +12,7 @@ import {
   Title,
   Tooltip,
   Legend,
+  ChartOptions,
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import { formatCurrency } from '@/lib/utils';
@@ -45,7 +46,7 @@ interface ReportData {
     totalExpense: number;
     movementCount: number;
   };
-  movements: any[];
+  movements: Movement[];
 }
 
 const ReportesPage = () => {
@@ -99,8 +100,8 @@ const ReportesPage = () => {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-    } catch (error) {
-      console.error('Error downloading CSV:', error);
+    } catch {
+      // Error downloading CSV
     } finally {
       setIsDownloading(false);
     }
@@ -181,7 +182,7 @@ const ReportesPage = () => {
     ],
   };
 
-  const chartOptions = {
+  const chartOptions: ChartOptions<'bar'> = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -191,7 +192,7 @@ const ReportesPage = () => {
       tooltip: {
         enabled: true,
         callbacks: {
-          label: function (context: any) {
+          label: function (context) {
             const movement = reportData.chartData[context.dataIndex];
             return [
               `Concepto: ${movement?.concept}`,

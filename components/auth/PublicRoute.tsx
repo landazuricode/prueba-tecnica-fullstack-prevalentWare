@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { authClient } from '../../lib/auth/client';
+import { authClient } from '@/lib/auth/client';
 
 interface PublicRouteProps {
   children: React.ReactNode;
@@ -27,8 +27,7 @@ const PublicRoute = ({ children, redirectTo = '/' }: PublicRouteProps) => {
         } else {
           setIsAuthenticated(false);
         }
-      } catch (error) {
-        console.error('Error checking authentication:', error);
+      } catch {
         setIsAuthenticated(false);
       } finally {
         setIsLoading(false);
@@ -57,4 +56,4 @@ const PublicRoute = ({ children, redirectTo = '/' }: PublicRouteProps) => {
   return <>{children}</>;
 };
 
-export default PublicRoute;
+export { PublicRoute };
