@@ -163,6 +163,13 @@ export interface UseUserRoleReturn {
   isLoading: boolean;
   isAdmin: boolean;
   isUser: boolean;
+  permissions?: {
+    canManageUsers: boolean;
+    canCreateMovements: boolean;
+    canViewReports: boolean;
+    canViewMovements: boolean;
+    canManageOwnProfile: boolean;
+  } | null;
 }
 
 // =============================================================================

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { authClient } from '../auth/client';
 import type { UserWithRole, UserRole, UseUserRoleReturn } from '../../types';
+import { getRolePermissions } from '../auth/middleware';
 
 export const useUserRole = (): UseUserRoleReturn => {
   const [role, setRole] = useState<UserRole | null>(null);
@@ -32,11 +33,14 @@ export const useUserRole = (): UseUserRoleReturn => {
     getUserRole();
   }, []);
 
+  const permissions = role ? getRolePermissions(role) : null;
+
   return {
     role,
     user,
     isLoading,
     isAdmin: role === 'ADMIN',
     isUser: role === 'USER',
+    permissions,
   };
 };
