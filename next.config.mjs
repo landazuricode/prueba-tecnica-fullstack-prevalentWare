@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
   // Configuración para imágenes externas
   images: {
     remotePatterns: [
@@ -50,9 +49,6 @@ const nextConfig = {
     return config;
   },
   // Configuración para Swagger UI
-  experimental: {
-    esmExternals: 'loose',
-  },
 };
 
 export default nextConfig;
