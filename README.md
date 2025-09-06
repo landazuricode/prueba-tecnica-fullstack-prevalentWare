@@ -1,117 +1,213 @@
-## Prueba Técnica para Desarrollador Fullstack
+# Prueba Técnica Fullstack - Prevalentware
 
-### Introducción
+Una aplicación fullstack desarrollada con Next.js, Prisma, PostgreSQL y Better Auth para la gestión de usuarios y movimientos financieros.
 
-El objetivo de esta prueba técnica es evaluar tus habilidades en el desarrollo de una aplicación fullstack. Deberás implementar un sistema de gestión de ingresos y egresos, la gestión de usuarios y la generación de reportes. El proyecto cuenta con [wireframes](<https://www.figma.com/design/2PINjveveJJ9ZAAwxwNoRK/Wireframes-(Copy)?node-id=0-1&t=6q0Q0id8YnjH9fJt-1>) que pueden servir de guía para el candidato. Sin embargo, el diseño de la interfaz de usuario es libre.
+## 🚀 Características
 
-### Requisitos del Proyecto
+- **Autenticación**: Sistema de autenticación con Better Auth
+- **Base de datos**: PostgreSQL con Prisma ORM
+- **UI**: Interfaz moderna con Tailwind CSS y Radix UI
+- **API**: Documentación automática con Swagger
+- **Testing**: Suite de pruebas con Jest
+- **RBAC**: Control de acceso basado en roles
 
-#### Funcionalidades Principales
+## 📋 Prerrequisitos
 
-1. **Roles y Permisos**
-   - **Roles:**
-     - **Usuario:** Solo puede acceder a la gestión de movimientos.
-     - **Administrador:** Puede ver los reportes, editar usuarios y agregar movimientos.
-   - **Nota:** Para efectos de prueba, todos los nuevos usuarios deben ser automáticamente asignados con el rol "ADMIN".
+Antes de comenzar, asegúrate de tener instalado:
 
-2. **Home**
-   - Página de inicio con un menú principal que permite la navegación a tres secciones:
-     - Sistema de gestión de ingresos y gastos (disponible para todos los roles)
-     - Gestión de usuarios (solo para administradores)
-     - Reportes (solo para administradores)
+- [Node.js](https://nodejs.org/) (versión 18 o superior)
+- [npm](https://www.npmjs.com/) o [yarn](https://yarnpkg.com/)
+- [PostgreSQL](https://www.postgresql.org/) (versión 13 o superior)
+- [Git](https://git-scm.com/)
 
-3. **Sistema de Gestión de Ingresos y Gastos**
-   - **Vista de Ingresos y Egresos**
-     - Implementar una tabla que muestre los ingresos y egresos registrados con las siguientes columnas:
-       - Concepto
-       - Monto
-       - Fecha
-       - Usuario
-     - Botón "Nuevo" para agregar un nuevo ingreso o egreso (solo para administradores).
-   - **Formulario de Nuevo Ingreso/Egreso**
-     - Formulario con los campos:
-       - Monto
-       - Concepto
-       - Fecha
-     - Botón para guardar el nuevo movimiento.
+## 🛠️ Instalación y Configuración Local
 
-4. **Gestión de Usuarios** (solo para administradores)
-   - **Vista de Usuarios**
-     - Tabla que muestre la lista de usuarios con las siguientes columnas:
-       - Nombre
-       - Correo
-       - Teléfono
-       - Acciones (editar usuario)
-   - **Formulario de Edición de Usuario**
-     - Formulario con los campos:
-       - Nombre
-       - Rol
-     - Botón para guardar los cambios.
+### 1. Clonar el repositorio
 
-5. **Reportes** (solo para administradores)
-   - Mostrar un gráfico de movimientos financieros.
-   - Mostrar el saldo actual.
-   - Botón para descargar el reporte en formato CSV.
+```bash
+git clone https://github.com/landazuricode/prueba-tecnica-fullstack-prevalentWare.git
+cd prueba-tecnica-fullstack-prevalentWare-main
+```
 
-### Requisitos Técnicos
+### 2. Instalar dependencias
 
-- **Tecnologías y Herramientas:**
-  - **Frontend:**
-    - Next.js utilizando `pages` router.
-    - TypeScript.
-    - Tailwind CSS.
-    - Shadcn para componentes de la interfaz de usuario.
-    - NextJS API routes para comunicación con el backend.
-  - **Backend:**
-    - NextJS API routes para implementar endpoints REST.
-    - Base de datos de Postgres en Supabase.
-     - **Documentación de API:** Implementar una ruta `/api/docs` que exponga la documentación del API usando OpenAPI/Swagger. Cada endpoint creado debe estar completamente documentado con sus parámetros, respuestas y ejemplos.
-   - **Protección de Datos:**
-     - Implementar control de acceso basado en roles (RBAC) para asegurar que solo los usuarios autorizados puedan acceder a ciertas funcionalidades y datos.
-     - Proteger el backend para que rechace conexiones no autenticadas.
-   - **Autenticación:**
-     - Utilizar [Better Auth](https://www.better-auth.com/) con [GitHub](https://github.com/settings/developers) como proveedor de autenticación y [Prisma](https://prisma.io) como adaptador para la autenticación por sesiones de base de datos.
-     - **IMPORTANTE:** Todos los nuevos usuarios que se registren deben ser automáticamente asignados con el rol "ADMIN" para facilitar las pruebas de la aplicación.
-   - **Pruebas unitarias**  - El candidato debe agregar al menos 3 pruebas unitarias donde considere necesario.
-  - **Despliegue:**
-    - Desplegar el proyecto en Vercel.
+```bash
+npm install
+# o
+yarn install
+```
 
-### Entregables
+### 3. Configurar variables de entorno
 
-1. **Código Fuente:**
-   - Repositorio en GitHub con el código fuente del proyecto.
-   - Incluir un archivo README con instrucciones claras sobre cómo ejecutar el proyecto localmente y cómo desplegarlo en Vercel.
+Crea un archivo `.env.local` en la raíz del proyecto con las siguientes variables:
 
-2. **Despliegue:**
-   - Proyecto desplegado en Vercel con la URL proporcionada.
+```env
+NEXT_PUBLIC_BETTER_AUTH_URL=https://prueba-tecnica-fullstack-prevalent.vercel.app
+BETTER_AUTH_SECRET=ZggAPmoNMNFfWqPVcr91G4ec1q4nlYFF
+NEXT_PUBLIC_GITHUB_CLIENT_ID=Ov23li3JrX7T3Eikglbe
+NEXT_GITHUB_CLIENT_SECRET=6f5bb9f4dd8173c650ac2fea217987391ebdd122
+DATABASE_URL="postgresql://postgres:V7ZgusM7ceKHLTJm@db.wacmpiclohqcxmacrugv.supabase.co:5432/postgres"
+NEXT_PUBLIC_API_URL="https://prueba-tecnica-fullstack-prevalent.vercel.app"
+```
 
-### Criterios de Evaluación
+### 4. Configurar la base de datos
 
-- **Funcionalidad:**
-  - Cumplimiento de todos los requisitos funcionales.
-  - Correcta implementación del CRUD para ingresos, egresos y usuarios.
-  - Generación y descarga de reportes en formato CSV.
+```bash
+# Generar el cliente de Prisma
+npx prisma generate
 
-- **Calidad del Código:**
-  - Calidad y claridad del código.
-  - Uso adecuado de las mejores prácticas de desarrollo.
-  - Estructura del proyecto.
-  - Documentación completa de la API con OpenAPI/Swagger.
+# Ejecutar las migraciones
+npx prisma db push
 
-- **Diseño y UX:**
-  - Usabilidad de la interfaz.
-  - Implementación de un diseño atractivo.
+# (Opcional) Sembrar la base de datos con datos de prueba
+npx prisma db seed
+```
 
-- **Pruebas y Documentación:**
-  - Cobertura de pruebas unitarias.
-  - Calidad de los comentarios dentro del proyecto.
+### 5. Ejecutar el proyecto
 
-- **Seguridad:**
-  - Implementación efectiva de control de acceso basado en roles (RBAC).
-  - Protección adecuada de los datos sensibles.
+```bash
+# Modo desarrollo
+npm run dev
+# o
+yarn dev
+```
 
-- **Notas**:
-  - El aplicativo no debe contener diseño responsivo.
-  - El candidato puede utilizar el código cargado en este repositorio. Sin embargo, esta no es una condición necesaria y el candidato puede iniciar el proyecto de 0 si lo desea.
-  - El candidato puede cambiar las versiones de las librerías si lo considera necesario.
-  - El candidato debe compartir el acceso al repositorio de GitHub y el .env a los correos mlopera@prevalentware.com, jdsanchez@prevalentware.com y dfsorza@prevalentware.com
+La aplicación estará disponible en [http://localhost:3000](http://localhost:3000)
+
+## 🧪 Testing
+
+```bash
+# Ejecutar todas las pruebas
+npm test
+
+# Ejecutar pruebas en modo watch
+npm run test:watch
+
+# Ejecutar pruebas con cobertura
+npm run test:coverage
+```
+
+## 📦 Scripts Disponibles
+
+- `npm run dev` - Inicia el servidor de desarrollo
+- `npm run build` - Construye la aplicación para producción
+- `npm run start` - Inicia el servidor de producción
+- `npm run lint` - Ejecuta el linter
+- `npm test` - Ejecuta las pruebas
+- `npm run test:watch` - Ejecuta las pruebas en modo watch
+- `npm run test:coverage` - Ejecuta las pruebas con reporte de cobertura
+
+## 🚀 Despliegue en Vercel
+
+### 1. Preparar el proyecto
+
+Asegúrate de que el proyecto esté listo para producción:
+
+```bash
+# Verificar que el build funciona correctamente
+npm run build
+```
+
+### 2. Conectar con Vercel
+
+#### Opción A: Desde la interfaz web de Vercel
+
+1. Ve a [vercel.com](https://vercel.com) y crea una cuenta o inicia sesión
+2. Haz clic en "New Project"
+3. Conecta tu repositorio de GitHub
+4. Selecciona el repositorio del proyecto
+
+#### Opción B: Usando Vercel CLI
+
+```bash
+# Instalar Vercel CLI globalmente
+npm i -g vercel
+
+# Iniciar sesión en Vercel
+vercel login
+
+# Desplegar desde el directorio del proyecto
+vercel
+
+# Para desplegar a producción
+vercel --prod
+```
+
+### 3. Configurar variables de entorno en Vercel
+
+En el dashboard de Vercel, ve a tu proyecto y configura las siguientes variables de entorno:
+
+#### Variables requeridas:
+
+- `DATABASE_URL` - URL de conexión a PostgreSQL (ej: `postgresql://user:password@host:port/database`)
+- `NEXT_PUBLIC_BETTER_AUTH_URL` - URL de tu aplicación desplegada (ej: `https://tu-app.vercel.app`)
+
+- `NEXT_PUBLIC_GITHUB_CLIENT_ID` - Client ID de GitHub OAuth
+- `NEXT_GITHUB_CLIENT_SECRET` - Client Secret de GitHub OAuth
+
+### 4. Configurar la base de datos en producción
+
+Para la base de datos en producción, puedes usar:
+
+#### Opción A: Vercel Postgres
+
+1. En el dashboard de Vercel, ve a la pestaña "Storage"
+2. Crea una nueva base de datos Postgres
+3. Copia la `DATABASE_URL` generada automáticamente
+
+#### Opción B: Servicios externos
+
+- [Neon](https://neon.tech/)
+- [Supabase](https://supabase.com/)
+- [PlanetScale](https://planetscale.com/)
+- [Railway](https://railway.app/)
+
+### 5. Ejecutar migraciones en producción
+
+```bash
+# Conectar a tu base de datos de producción y ejecutar
+npx prisma db push
+```
+
+### 6. Configurar dominio personalizado (opcional)
+
+1. En el dashboard de Vercel, ve a "Settings" > "Domains"
+2. Agrega tu dominio personalizado
+3. Configura los registros DNS según las instrucciones de Vercel
+
+## 📁 Estructura del Proyecto
+
+```
+├── components/          # Componentes React reutilizables
+│   ├── auth/           # Componentes de autenticación
+│   ├── layout/         # Componentes de layout
+│   └── ui/             # Componentes de UI base
+├── lib/                # Utilidades y configuración
+│   ├── auth/           # Configuración de autenticación
+│   └── hooks/          # Custom hooks
+├── pages/              # Páginas de Next.js
+│   ├── api/            # API routes
+│   └── ...             # Páginas de la aplicación
+├── prisma/             # Esquema y migraciones de Prisma
+├── styles/             # Estilos globales
+├── types/              # Definiciones de tipos TypeScript
+└── __tests__/          # Pruebas unitarias
+```
+
+## 🔧 Tecnologías Utilizadas
+
+- **Frontend**: Next.js 15, React 18, TypeScript
+- **Styling**: Tailwind CSS, Radix UI
+- **Backend**: Next.js API Routes
+- **Base de datos**: PostgreSQL, Prisma ORM
+- **Autenticación**: Better Auth
+- **Testing**: Jest, Testing Library
+- **Documentación**: Swagger UI
+- **Deployment**: Vercel
+
+## 📚 Documentación de la API
+
+Una vez que la aplicación esté ejecutándose, puedes acceder a la documentación de la API en:
+
+- **Desarrollo**: [http://localhost:3000/docs](http://localhost:3000/docs)
+- **Producción**: `https://tu-dominio.vercel.app/docs`
