@@ -1,9 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
 import { auth } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
 import { Session } from '@/lib/auth/types';
-
-const prisma = new PrismaClient();
 
 /**
  * @swagger
