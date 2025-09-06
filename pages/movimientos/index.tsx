@@ -6,6 +6,7 @@ import { useUserRole } from '@/lib/hooks/useUserRole';
 import { useGet } from '@/lib/hooks/useApi';
 import { Movement } from '@/lib/auth/types';
 import { formatCurrency, formatDate } from '@/lib/utils';
+import Link from 'next/link';
 
 const MovementsPage = () => {
   const { isAdmin } = useUserRole();
@@ -69,7 +70,11 @@ const MovementsPage = () => {
               <h2 className='text-xl font-semibold text-gray-800'>
                 Lista de Ingresos y Egresos
               </h2>
-              {isAdmin && <Button>+ Nuevo Movimiento</Button>}
+              {isAdmin && (
+                <Link href='/movimientos/nuevo'>
+                  <Button>+ Nuevo Movimiento</Button>
+                </Link>
+              )}
             </div>
 
             <div className='overflow-x-auto'>
