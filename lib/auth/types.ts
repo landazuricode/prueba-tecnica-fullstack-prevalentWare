@@ -7,6 +7,7 @@ export interface UserWithRole {
   id: string;
   name: string;
   email: string;
+  phone?: string;
   emailVerified: boolean;
   image?: string;
   role: string;
