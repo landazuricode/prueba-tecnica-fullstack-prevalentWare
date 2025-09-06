@@ -2,10 +2,35 @@ import Layout from '../../components/layout/Layout';
 import ProtectedRoute from '../../components/auth/ProtectedRoute';
 import RoleGuard from '../../components/auth/RoleGuard';
 import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { useGet } from '@/lib/hooks/useApi';
 import { UserWithRole } from '@/lib/auth/types';
 import { formatDate } from '@/lib/utils';
 import { useAuth } from '@/lib/auth/provider';
+import {
+  Edit,
+  User,
+  Mail,
+  Phone,
+  Calendar,
+  Shield,
+  UserCheck,
+} from 'lucide-react';
 import Link from 'next/link';
 
 const UsuariosPage = () => {
@@ -25,11 +50,13 @@ const UsuariosPage = () => {
       <ProtectedRoute>
         <RoleGuard allowedRoles={['ADMIN']}>
           <Layout title='Gestión de Usuarios'>
-            <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6'>
-              <div className='flex justify-center items-center h-64'>
-                <div className='text-gray-500'>Cargando usuarios...</div>
-              </div>
-            </div>
+            <Card>
+              <CardContent className='flex justify-center items-center h-64'>
+                <div className='text-muted-foreground'>
+                  Cargando usuarios...
+                </div>
+              </CardContent>
+            </Card>
           </Layout>
         </RoleGuard>
       </ProtectedRoute>
@@ -41,20 +68,20 @@ const UsuariosPage = () => {
       <ProtectedRoute>
         <RoleGuard allowedRoles={['ADMIN']}>
           <Layout title='Gestión de Usuarios'>
-            <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6'>
-              <div className='flex flex-col justify-center items-center h-64 space-y-4'>
-                <div className='text-red-500 text-center'>
+            <Card>
+              <CardContent className='flex flex-col justify-center items-center h-64 space-y-4'>
+                <div className='text-destructive text-center'>
                   <div className='font-semibold'>Error al cargar usuarios</div>
                   <div className='text-sm mt-2'>{error}</div>
                 </div>
-                <button
+                <Button
                   onClick={() => window.location.reload()}
-                  className='px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600'
+                  variant='default'
                 >
                   Reintentar
-                </button>
-              </div>
-            </div>
+                </Button>
+              </CardContent>
+            </Card>
           </Layout>
         </RoleGuard>
       </ProtectedRoute>
@@ -65,98 +92,131 @@ const UsuariosPage = () => {
     <ProtectedRoute>
       <RoleGuard allowedRoles={['ADMIN']}>
         <Layout title='Gestión de Usuarios'>
-          <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6'>
-            <div className='flex justify-between items-center mb-6'>
-              <h2 className='text-xl font-semibold text-gray-800'>
-                Lista de Usuarios
-              </h2>
-            </div>
-
-            <div className='overflow-x-auto'>
-              <table className='min-w-full divide-y divide-gray-200'>
-                <thead className='bg-gray-50'>
-                  <tr>
-                    <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                      Nombre
-                    </th>
-                    <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                      Correo
-                    </th>
-                    <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                      Teléfono
-                    </th>
-                    <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                      Rol
-                    </th>
-                    <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                      Fecha de Registro
-                    </th>
-                    <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                      Acciones
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className='bg-white divide-y divide-gray-200'>
-                  {users?.length === 0 ? (
-                    <tr>
-                      <td
-                        colSpan={6}
-                        className='px-6 py-8 text-center text-gray-500'
-                      >
-                        No hay usuarios registrados
-                      </td>
-                    </tr>
-                  ) : (
-                    users?.map((user) => (
-                      <tr key={user?.id} className='hover:bg-gray-50'>
-                        <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-900'>
-                          {user?.name}
-                        </td>
-                        <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>
-                          {user?.email}
-                        </td>
-                        <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>
-                          {user?.phone || 'No especificado'}
-                        </td>
-                        <td className='px-6 py-4 whitespace-nowrap'>
-                          <span
-                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                              user?.role === 'ADMIN'
-                                ? 'bg-green-100 text-green-800'
-                                : 'bg-blue-100 text-blue-800'
-                            }`}
+          <div className='space-y-6'>
+            <Card>
+              <CardHeader>
+                <div className='flex items-center space-x-4'>
+                  <div className='p-2 bg-primary/10 rounded-lg'>
+                    <User className='h-6 w-6 text-primary' />
+                  </div>
+                  <div>
+                    <CardTitle>Lista de Usuarios</CardTitle>
+                    <CardDescription className='mt-2'>
+                      Gestiona todos los usuarios del sistema y sus roles
+                    </CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className='overflow-x-auto'>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Usuario</TableHead>
+                        <TableHead>Contacto</TableHead>
+                        <TableHead>Rol</TableHead>
+                        <TableHead>Registro</TableHead>
+                        <TableHead>Acciones</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {users?.length === 0 ? (
+                        <TableRow>
+                          <TableCell
+                            colSpan={5}
+                            className='text-center py-8 text-muted-foreground'
                           >
-                            {user?.role === 'ADMIN'
-                              ? 'Administrador'
-                              : 'Usuario'}
-                          </span>
-                        </td>
-                        <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>
-                          {formatDate(user?.createdAt)}
-                        </td>
-                        <td className='px-6 py-4 whitespace-nowrap text-sm font-medium'>
-                          <Link
-                            href={
-                              user?.id === currentUserId
-                                ? '/mi-cuenta'
-                                : `/usuarios/editar/${user?.id}`
-                            }
+                            No hay usuarios registrados
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        users?.map((user) => (
+                          <TableRow
+                            key={user?.id}
+                            className='hover:bg-muted/50'
                           >
-                            <Button
-                              size='sm'
-                              variant='outline'
-                              className='text-indigo-600 hover:text-indigo-900 border-indigo-300 hover:border-indigo-400'
-                            >
-                              Editar
-                            </Button>
-                          </Link>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
+                            <TableCell>
+                              <div className='flex items-center space-x-3'>
+                                <div className='w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center'>
+                                  <img
+                                    src={user?.image}
+                                    className='h-full w-full rounded-full'
+                                  />
+                                </div>
+                                <div>
+                                  <div className='font-medium'>
+                                    {user?.name}
+                                  </div>
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className='space-y-1'>
+                                <div className='flex items-center space-x-2 text-sm'>
+                                  <Mail className='h-3 w-3 text-muted-foreground' />
+                                  <span>{user?.email}</span>
+                                </div>
+                                {user?.phone && (
+                                  <div className='flex items-center space-x-2 text-sm text-muted-foreground'>
+                                    <Phone className='h-3 w-3' />
+                                    <span>{user.phone}</span>
+                                  </div>
+                                )}
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                variant={
+                                  user?.role === 'ADMIN'
+                                    ? 'default'
+                                    : 'secondary'
+                                }
+                                className='flex items-center space-x-1 w-fit'
+                              >
+                                {user?.role === 'ADMIN' ? (
+                                  <Shield className='h-3 w-3' />
+                                ) : (
+                                  <UserCheck className='h-3 w-3' />
+                                )}
+                                <span>
+                                  {user?.role === 'ADMIN'
+                                    ? 'Administrador'
+                                    : 'Usuario'}
+                                </span>
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <div className='flex items-center space-x-2 text-sm text-muted-foreground'>
+                                <Calendar className='h-3 w-3' />
+                                <span>{formatDate(user?.createdAt)}</span>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <Link
+                                href={
+                                  user?.id === currentUserId
+                                    ? '/mi-cuenta'
+                                    : `/usuarios/editar/${user?.id}`
+                                }
+                              >
+                                <Button
+                                  size='sm'
+                                  variant='outline'
+                                  className='flex items-center space-x-1'
+                                >
+                                  <Edit className='h-3 w-3' />
+                                  <span>Editar</span>
+                                </Button>
+                              </Link>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </Layout>
       </RoleGuard>

@@ -1,29 +1,73 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import Layout from '../../../components/layout/Layout';
 import ProtectedRoute from '../../../components/auth/ProtectedRoute';
 import RoleGuard from '../../../components/auth/RoleGuard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 import { useGet, usePut } from '@/lib/hooks/useApi';
 import { UserWithRole } from '@/lib/auth/types';
 import { formatDate } from '@/lib/utils';
+import {
+  ArrowLeft,
+  Save,
+  User,
+  Mail,
+  Phone,
+  Calendar,
+  Shield,
+  UserCheck,
+} from 'lucide-react';
+import Link from 'next/link';
 
-interface UpdateUserData {
-  name: string;
-  role: 'ADMIN' | 'USER';
-}
+// Esquema de validación con Zod
+const userSchema = z.object({
+  name: z
+    .string()
+    .min(1, 'El nombre es requerido')
+    .max(100, 'El nombre no puede exceder 100 caracteres'),
+  role: z.enum(['ADMIN', 'USER'] as const),
+});
+
+type UserFormData = z.infer<typeof userSchema>;
 
 const EditarUsuarioPage = () => {
   const router = useRouter();
   const { id } = router.query;
 
-  const [formData, setFormData] = useState<UpdateUserData>({
-    name: '',
-    role: 'USER',
+  const form = useForm<UserFormData>({
+    resolver: zodResolver(userSchema),
+    defaultValues: {
+      name: '',
+      role: 'USER',
+    },
   });
-
-  const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Obtener datos del usuario
   const {
@@ -50,62 +94,18 @@ const EditarUsuarioPage = () => {
   // Cargar datos del usuario cuando se obtengan
   useEffect(() => {
     if (user) {
-      setFormData({
+      form.reset({
         name: user.name || '',
         role: (user.role as 'ADMIN' | 'USER') || 'USER',
       });
     }
-  }, [user]);
+  }, [user, form]);
 
-  const handleInputChange = (field: keyof UpdateUserData, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-
-    // Limpiar error del campo cuando el usuario empiece a escribir
-    if (errors[field]) {
-      setErrors((prev) => ({
-        ...prev,
-        [field]: '',
-      }));
-    }
-  };
-
-  const validateForm = (): boolean => {
-    const newErrors: Record<string, string> = {};
-
-    if (!formData.name.trim()) {
-      newErrors.name = 'El nombre es requerido';
-    }
-
-    if (!formData.role) {
-      newErrors.role = 'El rol es requerido';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
-
-    try {
-      await updateUser({
-        id: id as string,
-        ...formData,
-      });
-    } catch (error) {
-      console.error('Error updating user:', error);
-    }
-  };
-
-  const handleCancel = () => {
-    router.push('/usuarios');
+  const onSubmit = (data: UserFormData) => {
+    updateUser({
+      id: id as string,
+      ...data,
+    });
   };
 
   if (isLoadingUser) {
@@ -113,11 +113,11 @@ const EditarUsuarioPage = () => {
       <ProtectedRoute>
         <RoleGuard allowedRoles={['ADMIN']}>
           <Layout title='Editar Usuario'>
-            <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6'>
-              <div className='flex justify-center items-center h-64'>
-                <div className='text-gray-500'>Cargando usuario...</div>
-              </div>
-            </div>
+            <Card>
+              <CardContent className='flex justify-center items-center h-64'>
+                <div className='text-muted-foreground'>Cargando usuario...</div>
+              </CardContent>
+            </Card>
           </Layout>
         </RoleGuard>
       </ProtectedRoute>
@@ -129,22 +129,22 @@ const EditarUsuarioPage = () => {
       <ProtectedRoute>
         <RoleGuard allowedRoles={['ADMIN']}>
           <Layout title='Editar Usuario'>
-            <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6'>
-              <div className='flex flex-col justify-center items-center h-64 space-y-4'>
-                <div className='text-red-500 text-center'>
+            <Card>
+              <CardContent className='flex flex-col justify-center items-center h-64 space-y-4'>
+                <div className='text-destructive text-center'>
                   <div className='font-semibold'>Error al cargar usuario</div>
                   <div className='text-sm mt-2'>
                     {userError || 'Usuario no encontrado'}
                   </div>
                 </div>
-                <button
+                <Button
                   onClick={() => router.push('/usuarios')}
-                  className='px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600'
+                  variant='default'
                 >
                   Volver a Usuarios
-                </button>
-              </div>
-            </div>
+                </Button>
+              </CardContent>
+            </Card>
           </Layout>
         </RoleGuard>
       </ProtectedRoute>
@@ -155,206 +155,214 @@ const EditarUsuarioPage = () => {
     <ProtectedRoute>
       <RoleGuard allowedRoles={['ADMIN']}>
         <Layout title='Editar Usuario'>
-          <div className='max-w-2xl mx-auto px-4 sm:px-6 lg:px-8'>
-            <div className='bg-white rounded-xl shadow-lg border border-gray-200 p-8'>
-              <div className='text-center mb-8'>
-                <h2 className='text-2xl font-semibold text-gray-800 mb-2'>
-                  Editar Usuario
-                </h2>
-                <p className='text-gray-600'>
-                  Modifique los datos del usuario seleccionado
-                </p>
-              </div>
-
-              <form onSubmit={handleSubmit} className='space-y-6'>
-                <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                  <div className='md:col-span-2'>
-                    <label
-                      htmlFor='name'
-                      className='block text-sm font-semibold text-gray-700 mb-2'
-                    >
-                      Nombre Completo *
-                    </label>
-                    <Input
-                      id='name'
-                      type='text'
-                      autoComplete='off'
-                      value={formData.name}
-                      onChange={(e) =>
-                        handleInputChange('name', e.target.value)
-                      }
-                      placeholder='Nombre completo del usuario'
-                      className={`${errors.name ? 'border-red-500 focus:ring-red-500' : 'focus:ring-blue-500'}`}
-                    />
-                    {errors.name && (
-                      <p className='mt-2 text-sm text-red-600 flex items-center'>
-                        <svg
-                          className='w-4 h-4 mr-1'
-                          fill='currentColor'
-                          viewBox='0 0 20 20'
-                        >
-                          <path
-                            fillRule='evenodd'
-                            d='M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z'
-                            clipRule='evenodd'
-                          />
-                        </svg>
-                        {errors.name}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className='md:col-span-2'>
-                    <label
-                      htmlFor='role'
-                      className='block text-sm font-semibold text-gray-700 mb-2'
-                    >
-                      Rol del Usuario *
-                    </label>
-                    <select
-                      id='role'
-                      value={formData.role}
-                      onChange={(e) =>
-                        handleInputChange(
-                          'role',
-                          e.target.value as 'ADMIN' | 'USER'
-                        )
-                      }
-                      className={`w-full h-10 px-3 py-2 border rounded-md bg-white text-sm focus:outline-none focus:ring-2 focus:border-transparent transition-colors ${
-                        errors.role
-                          ? 'border-red-500 focus:ring-red-500'
-                          : 'border-gray-300 focus:ring-blue-500'
-                      }`}
-                    >
-                      <option value='USER'>👤 Usuario</option>
-                      <option value='ADMIN'>👑 Administrador</option>
-                    </select>
-                    {errors.role && (
-                      <p className='mt-2 text-sm text-red-600 flex items-center'>
-                        <svg
-                          className='w-4 h-4 mr-1'
-                          fill='currentColor'
-                          viewBox='0 0 20 20'
-                        >
-                          <path
-                            fillRule='evenodd'
-                            d='M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z'
-                            clipRule='evenodd'
-                          />
-                        </svg>
-                        {errors.role}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className='md:col-span-2'>
-                    <div className='bg-gray-50 rounded-lg p-4 space-y-2'>
-                      <h3 className='text-sm font-semibold text-gray-700 mb-3'>
-                        Información del Usuario
-                      </h3>
-                      <div className='grid grid-cols-1 md:grid-cols-2 gap-4 text-sm'>
-                        <div>
-                          <span className='font-medium text-gray-600'>
-                            Email:
-                          </span>
-                          <p className='text-gray-800'>{user.email}</p>
-                        </div>
-                        <div>
-                          <span className='font-medium text-gray-600'>
-                            Teléfono:
-                          </span>
-                          <p className='text-gray-800'>
-                            {user.phone || 'No especificado'}
-                          </p>
-                        </div>
-                        <div>
-                          <span className='font-medium text-gray-600'>
-                            Fecha de Registro:
-                          </span>
-                          <p className='text-gray-800'>
-                            {formatDate(user.createdAt)}
-                          </p>
-                        </div>
-                        <div>
-                          <span className='font-medium text-gray-600'>
-                            Última Actualización:
-                          </span>
-                          <p className='text-gray-800'>
-                            {formatDate(user.updatedAt)}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
+          <div className='space-y-6'>
+            <Card>
+              <CardHeader>
+                <div className='flex items-center space-x-4'>
+                  <Link href='/usuarios'>
+                    <Button variant='outline' size='icon'>
+                      <ArrowLeft className='h-4 w-4' />
+                    </Button>
+                  </Link>
+                  <div>
+                    <CardTitle>Editar Usuario</CardTitle>
+                    <CardDescription className='mt-2'>
+                      Modifica los datos del usuario seleccionado
+                    </CardDescription>
                   </div>
                 </div>
-
-                {updateError && (
-                  <div className='bg-red-50 border border-red-200 rounded-lg p-4 flex items-start'>
-                    <svg
-                      className='w-5 h-5 text-red-400 mr-3 mt-0.5'
-                      fill='currentColor'
-                      viewBox='0 0 20 20'
-                    >
-                      <path
-                        fillRule='evenodd'
-                        d='M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z'
-                        clipRule='evenodd'
+              </CardHeader>
+              <CardContent>
+                <Form {...form}>
+                  <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className='space-y-6'
+                  >
+                    <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                      {/* Campo Nombre */}
+                      <FormField
+                        control={form.control}
+                        name='name'
+                        render={({ field }) => (
+                          <FormItem className='md:col-span-2'>
+                            <FormLabel>Nombre Completo *</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder='Nombre completo del usuario'
+                                autoComplete='off'
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
-                    </svg>
-                    <div>
-                      <h3 className='text-sm font-medium text-red-800'>
-                        Error al actualizar usuario
-                      </h3>
-                      <p className='text-sm text-red-600 mt-1'>{updateError}</p>
-                    </div>
-                  </div>
-                )}
 
-                <div className='flex flex-col sm:flex-row justify-end gap-4 pt-6 border-t border-gray-200'>
-                  <Button
-                    type='button'
-                    variant='outline'
-                    onClick={handleCancel}
-                    disabled={isUpdating}
-                    className='w-full sm:w-auto'
-                  >
-                    Cancelar
-                  </Button>
-                  <Button
-                    type='submit'
-                    disabled={isUpdating}
-                    className='w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white'
-                  >
-                    {isUpdating ? (
-                      <>
-                        <svg
-                          className='animate-spin -ml-1 mr-2 h-4 w-4 text-white'
-                          fill='none'
-                          viewBox='0 0 24 24'
-                        >
-                          <circle
-                            className='opacity-25'
-                            cx='12'
-                            cy='12'
-                            r='10'
-                            stroke='currentColor'
-                            strokeWidth='4'
-                          ></circle>
-                          <path
-                            className='opacity-75'
-                            fill='currentColor'
-                            d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
-                          ></path>
-                        </svg>
-                        Actualizando...
-                      </>
-                    ) : (
-                      'Actualizar Usuario'
+                      {/* Campo Rol */}
+                      <FormField
+                        control={form.control}
+                        name='role'
+                        render={({ field }) => (
+                          <FormItem className='md:col-span-2'>
+                            <FormLabel>Rol del Usuario *</FormLabel>
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder='Selecciona el rol' />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value='USER'>
+                                  <div className='flex items-center space-x-2'>
+                                    <UserCheck className='h-4 w-4' />
+                                    <span>Usuario</span>
+                                  </div>
+                                </SelectItem>
+                                <SelectItem value='ADMIN'>
+                                  <div className='flex items-center space-x-2'>
+                                    <Shield className='h-4 w-4' />
+                                    <span>Administrador</span>
+                                  </div>
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    {/* Información del Usuario */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className='text-lg flex items-center space-x-2'>
+                          <User className='h-5 w-5' />
+                          <span>Información del Usuario</span>
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                          <div className='space-y-4'>
+                            <div className='flex items-center space-x-3'>
+                              <div className='p-2 bg-blue-100 rounded-lg'>
+                                <Mail className='h-4 w-4 text-blue-600' />
+                              </div>
+                              <div>
+                                <p className='text-sm font-medium text-muted-foreground'>
+                                  Email
+                                </p>
+                                <p className='text-sm'>{user.email}</p>
+                              </div>
+                            </div>
+                            <div className='flex items-center space-x-3'>
+                              <div className='p-2 bg-green-100 rounded-lg'>
+                                <Phone className='h-4 w-4 text-green-600' />
+                              </div>
+                              <div>
+                                <p className='text-sm font-medium text-muted-foreground'>
+                                  Teléfono
+                                </p>
+                                <p className='text-sm'>
+                                  {user.phone || 'No especificado'}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className='space-y-4'>
+                            <div className='flex items-center space-x-3'>
+                              <div className='p-2 bg-purple-100 rounded-lg'>
+                                <Calendar className='h-4 w-4 text-purple-600' />
+                              </div>
+                              <div>
+                                <p className='text-sm font-medium text-muted-foreground'>
+                                  Fecha de Registro
+                                </p>
+                                <p className='text-sm'>
+                                  {formatDate(user.createdAt)}
+                                </p>
+                              </div>
+                            </div>
+                            <div className='flex items-center space-x-3'>
+                              <div className='p-2 bg-orange-100 rounded-lg'>
+                                <Calendar className='h-4 w-4 text-orange-600' />
+                              </div>
+                              <div>
+                                <p className='text-sm font-medium text-muted-foreground'>
+                                  Última Actualización
+                                </p>
+                                <p className='text-sm'>
+                                  {formatDate(user.updatedAt)}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className='mt-6 pt-4 border-t'>
+                          <div className='flex items-center space-x-2'>
+                            <Badge
+                              variant={
+                                user.role === 'ADMIN' ? 'default' : 'secondary'
+                              }
+                              className='flex items-center space-x-1'
+                            >
+                              {user.role === 'ADMIN' ? (
+                                <Shield className='h-3 w-3' />
+                              ) : (
+                                <UserCheck className='h-3 w-3' />
+                              )}
+                              <span>
+                                Rol actual:{' '}
+                                {user.role === 'ADMIN'
+                                  ? 'Administrador'
+                                  : 'Usuario'}
+                              </span>
+                            </Badge>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Error de API */}
+                    {updateError && (
+                      <div className='p-4 bg-destructive/10 border border-destructive/20 rounded-md'>
+                        <p className='text-sm text-destructive'>
+                          Error al actualizar usuario: {updateError}
+                        </p>
+                      </div>
                     )}
-                  </Button>
-                </div>
-              </form>
-            </div>
+
+                    {/* Botones */}
+                    <div className='flex justify-end space-x-4'>
+                      <Link href='/usuarios'>
+                        <Button
+                          type='button'
+                          variant='outline'
+                          disabled={isUpdating}
+                        >
+                          Cancelar
+                        </Button>
+                      </Link>
+                      <Button type='submit' disabled={isUpdating}>
+                        {isUpdating ? (
+                          <>
+                            <div className='mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent' />
+                            Actualizando...
+                          </>
+                        ) : (
+                          <>
+                            <Save className='mr-2 h-4 w-4' />
+                            Actualizar Usuario
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </form>
+                </Form>
+              </CardContent>
+            </Card>
           </div>
         </Layout>
       </RoleGuard>

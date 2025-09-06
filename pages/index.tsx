@@ -1,8 +1,22 @@
 import Layout from '../components/layout/Layout';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 import { useUserRole } from '../lib/hooks/useUserRole';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
-import { DollarSign, Users, BarChart3, ArrowRight } from 'lucide-react';
+import {
+  DollarSign,
+  Users,
+  BarChart3,
+  ArrowRight,
+  UserCheck,
+} from 'lucide-react';
 import type { NavigationCard } from '../types';
 
 // Tipo para los iconos de Lucide React
@@ -48,85 +62,94 @@ const Home = () => {
   return (
     <ProtectedRoute>
       <Layout title=''>
-        <div className='bg-gray-900 rounded-lg pb-4'>
-          <div className='space-y-8 p-6'>
-            <div>
+        <div className='space-y-8'>
+          {/* Header con logo */}
+          <Card className='bg-gradient-to-r from-slate-900 to-slate-800 border-0'>
+            <CardContent className='flex justify-center py-8'>
               <img
                 src='https://www.prevalentware.com/wp-content/uploads/2024/07/logo-prevalentware.png'
                 alt='PrevalentWare'
-                className=' mx-auto'
+                className='h-16'
               />
-            </div>
+            </CardContent>
+          </Card>
 
-            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto'>
-              {navigationCards.map((card) => {
-                const IconComponent = card.icon;
-                const isDisabled = !card.available;
+          {/* Tarjetas de navegación */}
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+            {navigationCards.map((card) => {
+              const IconComponent = card.icon;
+              const isDisabled = !card.available;
 
-                return (
-                  <div
-                    key={card.title}
-                    className={`group bg-white border border-gray-200 relative overflow-hidden rounded-2xl transition-all duration-300 ${
-                      isDisabled
-                        ? 'opacity-50 cursor-not-allowed'
-                        : 'cursor-pointer'
-                    }`}
-                  >
-                    {card.available ? (
-                      <Link href={card.href} className='block h-full'>
-                        <div
-                          className={`h-full bg-white/90 backdrop-blur-sm border border-white/20 shadow-xl hover:shadow-lg transition-all duration-300`}
-                        >
+              return (
+                <Card
+                  key={card.title}
+                  className={`group transition-all duration-300 hover:shadow-lg ${
+                    isDisabled
+                      ? 'opacity-50 cursor-not-allowed'
+                      : 'cursor-pointer '
+                  }`}
+                >
+                  {card.available ? (
+                    <Link href={card.href} className='block h-full'>
+                      <CardHeader className='pb-4'>
+                        <div className='flex items-center space-x-4'>
                           <div
-                            className={`absolute inset-0 ${card.bgPattern} opacity-30`}
-                          />
-
-                          <div className='relative p-8 py-4 h-full flex flex-col'>
-                            <div
-                              className={`inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r ${card.gradient} rounded-2xl shadow-lg mb-6 group-hover:scale-110 transition-transform duration-300`}
-                            >
-                              <IconComponent className='w-8 h-8 text-white' />
-                            </div>
-
-                            <div className='flex-1'>
-                              <h3 className='text-xl font-bold text-gray-800 mb-2 group-hover:text-gray-900 transition-colors'>
-                                {card.title}
-                              </h3>
-                              <p className='text-gray-600 text-sm leading-relaxed mb-6'>
-                                {card.description}
-                              </p>
-                            </div>
-
-                            <div className='flex items-center justify-between pt-2 border-t border-gray-100'>
-                              <span className='text-sm font-medium text-gray-500'>
-                                Acceder
-                              </span>
-                              <ArrowRight
-                                className={`w-5 h-5 ${card.iconColor} group-hover:translate-x-1 transition-transform duration-300`}
-                              />
-                            </div>
+                            className={`inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r ${card.gradient} rounded-lg shadow-lg group-hover:scale-110 transition-transform duration-300`}
+                          >
+                            <IconComponent className='w-6 h-6 text-white' />
                           </div>
+                          <div className='flex-1'>
+                            <CardTitle className='text-lg group-hover:text-primary transition-colors'>
+                              {card.title}
+                            </CardTitle>
+                          </div>
+                          <ArrowRight className='w-5 h-5 text-muted-foreground group-hover:translate-x-1 transition-transform duration-300' />
                         </div>
-                      </Link>
-                    ) : (
-                      <div className='h-full bg-white/50 backdrop-blur-sm border border-gray-200 shadow-lg rounded-2xl p-8 flex flex-col items-center justify-center text-center'>
-                        <div className='w-16 h-16 bg-gray-200 rounded-2xl flex items-center justify-center mb-4'>
-                          <IconComponent className='w-8 h-8 text-gray-400' />
-                        </div>
-                        <h3 className='text-xl font-bold text-gray-400 mb-2'>
-                          {card.title}
-                        </h3>
-                        <div className='px-4 py-2 bg-gray-100 rounded-full'>
-                          <span className='text-xs font-medium text-gray-500'>
-                            Solo administradores
+                      </CardHeader>
+                      <CardContent>
+                        <CardDescription className='text-sm leading-relaxed'>
+                          {card.description}
+                        </CardDescription>
+                        <div className='mt-4 flex items-center justify-between'>
+                          <Badge variant='secondary' className='text-xs'>
+                            Disponible
+                          </Badge>
+                          <span className='text-xs text-muted-foreground'>
+                            Hacer clic para acceder
                           </span>
                         </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+                      </CardContent>
+                    </Link>
+                  ) : (
+                    <>
+                      <CardHeader className='pb-4'>
+                        <div className='flex items-center space-x-4'>
+                          <div className='w-12 h-12 bg-muted rounded-lg flex items-center justify-center'>
+                            <IconComponent className='w-6 h-6 text-muted-foreground' />
+                          </div>
+                          <div className='flex-1'>
+                            <CardTitle className='text-lg text-muted-foreground'>
+                              {card.title}
+                            </CardTitle>
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <CardDescription className='text-sm text-muted-foreground'>
+                          {card.description}
+                        </CardDescription>
+                        <div className='mt-4'>
+                          <Badge variant='outline' className='text-xs'>
+                            <UserCheck className='w-3 h-3 mr-1' />
+                            Solo administradores
+                          </Badge>
+                        </div>
+                      </CardContent>
+                    </>
+                  )}
+                </Card>
+              );
+            })}
           </div>
         </div>
       </Layout>

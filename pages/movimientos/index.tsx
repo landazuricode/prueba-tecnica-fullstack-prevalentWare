@@ -2,10 +2,26 @@ import Layout from '../../components/layout/Layout';
 import ProtectedRoute from '../../components/auth/ProtectedRoute';
 import RoleGuard from '../../components/auth/RoleGuard';
 import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { useUserRole } from '@/lib/hooks/useUserRole';
 import { useGet } from '@/lib/hooks/useApi';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import Link from 'next/link';
+import { Plus } from 'lucide-react';
 import type { Movement } from '@/types';
 
 const MovementsPage = () => {
@@ -23,11 +39,13 @@ const MovementsPage = () => {
       <ProtectedRoute>
         <RoleGuard allowedRoles={['ADMIN', 'USER']}>
           <Layout title='Gestión de Movimientos'>
-            <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6'>
-              <div className='flex justify-center items-center h-64'>
-                <div className='text-gray-500'>Cargando movimientos...</div>
-              </div>
-            </div>
+            <Card>
+              <CardContent className='flex justify-center items-center h-64'>
+                <div className='text-muted-foreground'>
+                  Cargando movimientos...
+                </div>
+              </CardContent>
+            </Card>
           </Layout>
         </RoleGuard>
       </ProtectedRoute>
@@ -39,22 +57,22 @@ const MovementsPage = () => {
       <ProtectedRoute>
         <RoleGuard allowedRoles={['ADMIN', 'USER']}>
           <Layout title='Gestión de Movimientos'>
-            <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6'>
-              <div className='flex flex-col justify-center items-center h-64 space-y-4'>
-                <div className='text-red-500 text-center'>
+            <Card>
+              <CardContent className='flex flex-col justify-center items-center h-64 space-y-4'>
+                <div className='text-destructive text-center'>
                   <div className='font-semibold'>
                     Error al cargar movimientos
                   </div>
                   <div className='text-sm mt-2'>{error}</div>
                 </div>
-                <button
+                <Button
                   onClick={() => window.location.reload()}
-                  className='px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600'
+                  variant='default'
                 >
                   Reintentar
-                </button>
-              </div>
-            </div>
+                </Button>
+              </CardContent>
+            </Card>
           </Layout>
         </RoleGuard>
       </ProtectedRoute>
@@ -65,74 +83,81 @@ const MovementsPage = () => {
     <ProtectedRoute>
       <RoleGuard allowedRoles={['ADMIN', 'USER']}>
         <Layout title='Gestión de Movimientos'>
-          <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6'>
-            <div className='flex justify-between items-center mb-6'>
-              <h2 className='text-xl font-semibold text-gray-800'>
-                Lista de Ingresos y Egresos
-              </h2>
-              {isAdmin && (
-                <Link href='/movimientos/nuevo'>
-                  <Button>+ Nuevo Movimiento</Button>
-                </Link>
-              )}
-            </div>
-
-            <div className='overflow-x-auto'>
-              <table className='min-w-full divide-y divide-gray-200'>
-                <thead className='bg-gray-50'>
-                  <tr>
-                    <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                      Concepto
-                    </th>
-                    <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                      Monto
-                    </th>
-                    <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                      Fecha
-                    </th>
-                    <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                      Usuario
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className='bg-white divide-y divide-gray-200'>
-                  {movements?.length === 0 ? (
-                    <tr>
-                      <td
-                        colSpan={4}
-                        className='px-6 py-8 text-center text-gray-500'
-                      >
-                        No hay movimientos registrados
-                      </td>
-                    </tr>
-                  ) : (
-                    movements?.map((movement) => (
-                      <tr key={movement?.id}>
-                        <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-900'>
-                          {movement?.concept}
-                        </td>
-                        <td
-                          className={`px-6 py-4 whitespace-nowrap text-sm font-medium ${
-                            movement?.type === 'INCOME'
-                              ? 'text-green-600'
-                              : 'text-red-600'
-                          }`}
-                        >
-                          {movement?.type === 'INCOME' ? '+' : '-'}
-                          {formatCurrency(Math.abs(movement.amount))}
-                        </td>
-                        <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>
-                          {formatDate(movement?.date)}
-                        </td>
-                        <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>
-                          {movement?.user?.name}
-                        </td>
-                      </tr>
-                    ))
+          <div className='space-y-6'>
+            <Card>
+              <CardHeader>
+                <div className='flex justify-between items-center'>
+                  <div>
+                    <CardTitle>Lista de Ingresos y Egresos</CardTitle>
+                    <CardDescription className='mt-2'>
+                      Gestiona todos los movimientos financieros del sistema
+                    </CardDescription>
+                  </div>
+                  {isAdmin && (
+                    <Link href='/movimientos/nuevo'>
+                      <Button>
+                        <Plus className='mr-2 h-4 w-4' />
+                        Nuevo Movimiento
+                      </Button>
+                    </Link>
                   )}
-                </tbody>
-              </table>
-            </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className='overflow-x-auto'>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Concepto</TableHead>
+                        <TableHead>Monto</TableHead>
+                        <TableHead>Fecha</TableHead>
+                        <TableHead>Usuario</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {movements?.length === 0 ? (
+                        <TableRow>
+                          <TableCell
+                            colSpan={4}
+                            className='text-center py-8 text-muted-foreground'
+                          >
+                            No hay movimientos registrados
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        movements?.map((movement) => (
+                          <TableRow key={movement?.id}>
+                            <TableCell className='font-medium'>
+                              {movement?.concept}
+                            </TableCell>
+                            <TableCell>
+                              <div className='flex items-center space-x-2'>
+                                <span
+                                  className={`font-medium ${
+                                    movement?.type === 'INCOME'
+                                      ? 'text-green-600'
+                                      : 'text-red-600'
+                                  }`}
+                                >
+                                  {movement?.type === 'INCOME' ? '+' : '-'}
+                                  {formatCurrency(Math.abs(movement.amount))}
+                                </span>
+                              </div>
+                            </TableCell>
+                            <TableCell className='text-muted-foreground'>
+                              {formatDate(movement?.date)}
+                            </TableCell>
+                            <TableCell className='text-muted-foreground'>
+                              {movement?.user?.name}
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </Layout>
       </RoleGuard>
